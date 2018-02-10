@@ -28,7 +28,8 @@
 \newtheorem{observation}{Observation}
 \newtheorem{fact}{Fact}
 
-\newcommand{\OT}[2]{#1\text{-out-of-}#2\text{-OT}}
+\newcommand{\OT}[2]{#1\text{-out-of-}#2\text{-bit-OT}}
+\newcommand{\sOT}[2]{#1\text{-out-of-}#2\text{-string-OT}}
 \newcommand{\support}{\mathrm{support}}
 \newcommand{\F}{\mathbb{F}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -43,15 +44,33 @@
 \maketitle
 
 \begin{abstract}
-TODO.
+We initiate the study of perfect (rather than merely statistical) reductions among cryptographic primitives. For simplicity, we focus on client-server functionalities.
+As opposed to the computational and statistical worlds, quite little is known here.
+While 1-out-of-2 bit-OT oblivious transfer (and several other functionalities) is known to be complete for client server functionalities since the seminal work of Killian. Furthermore~\cite{IKOPSW11} demonstrate a reduction reduction with improved efficiency that can be carried out in one round, making parallel calls to the OT (oracles), where the receiver plays the role of OT receiver in all instances~\cite{IKOPSW11}.  
+
+We make first steps towards understanding perfect reductions, proving that a large class of client-server functions is perfectly reducible to 1-out-of-2 bit-OT.
+To the best of our knowledge. In particular, we show that for ``most'' finite functions of the form $f:X\times Y\rightarrow \{0,1\}$, where server domain size $|Y|$ is larger than client domain size $|X|$, a constant functions are perfectly reducible to 1-out-of-2 OT. This fraction grows roughly as $1-exp(|X|-|Y|)$
+Furthermore, the reduction is 1-round, and the receiver plays the role of the receiver in all OT calls. As far as we know, before now, very few functionalities such as $k$-out-of-$n$ OT were known to be computable in the 1-out-of-2 bit-OT hybrid model with perfect security.
+
+Our work leaves open the question of whether all finite client-server functionalities are reducible to bit-OT. In general, are there any (OT or other) complete functionalities for client server SFE, even in more then 1 round.
+Next, once could study functionalities where both parties receive inputs, and randomized functionalities.
+ 
+In addition to the obvious theoretical appeal of the question towards better understanding secure computation, perfect, as opposed to statistical reductions may be useful for designing MPC protocols with high concrete efficiency, achieved to eliminating the dependence on a security parameter.
 \end{abstract}
 
 \section{Introduction}
 
 TODO.
-\section{Model and notation}
+\section{Preliminaries}
 
-Consider a function $f:X\times Y\rightarrow Z$ for finite domains $X,Y,Z$. By default, we set $Z=\{0,1\}$. Our goal is to devise a perfect 1-round reduction $\Pi$ from securely evaluating $f$ to securely evaluating $l$ parallel instances of $\OT{1}{2}$\footnote{In the sequel, we will refer to such 1-round reductions simply as a ``protocol''.}. Here $f$ is a client-server functionality, where the server inputs $y\in Y$, and client inputs $x\in X$ and learns the output $f(x,y)$. Here $\Pi=(\Pi_C,\Pi_R,\Pi_S)$ is comprised of a tuple of randomized algorithms, where $\Pi_C(x)$ generates client's queries, $\Pi_R(x,c,v)$ generates client's output based on $x,c$ and OT reply $v$, and $\Pi_S(y)$ is server's generator of OT inputs. $\Pi_C$ and $\Pi_R$ share randomness $r$.
+\subsection{Our model}
+We consider secure evaluation of client-server (non interactive, deterministic) functionalities $f:X\times Y\rightarrow Z$ for finite domains $X,Y,Z$, where the client outputs $f(x,y)$ and the server outputs $\bot$ (has no output). By default, we set $Z=\{0,1\}$. We consider secure evaluation of such $f$ in the stand-alone setting, with perfect privacy, against a non adaptive malicious adversary corrupting a single party. More specifically, we focus 
+on perfect 1-round protocols $\Pi$ in the $\OT{1}{2}$-hybrid model
+securely evaluating $f$, where the client plays the role of the receiver in all OT calls. 
+Alternatively, such protocols can be viewed as 1-round reduction of evaluating $f$ to securely evaluating the functionality $\OT^l{1}{2}$, receiving $l$ bits $x_1,\ldots,x_l$ from the client and $\textbf{y}_1,\ldots,\textbf{y}_l$ from the server 
+, where $\textbf{y}_i=(y_{i,0},y_{i,1})$ is a pair of bits.
+
+Here $f$ is a client-server functionality, where the server inputs $y\in Y$, and client inputs $x\in X$ and learns the output $f(x,y)$. Here $\Pi=(\Pi_C,\Pi_R,\Pi_S)$ is comprised of a tuple of randomized algorithms, where $\Pi_C(x)$ generates client's queries, $\Pi_R(x,c,v)$ generates client's output based on $x,c$ and OT reply $v$, and $\Pi_S(y)$ is server's generator of OT inputs. $\Pi_C$ and $\Pi_R$ share randomness $r$.
 
 \subsection{Notation} 
 Fix $Z=\{0,1\}$. For a given server's strategy $s^*\in\{0,1\}^{2l}$\;\footnote{This notion naturally generalizes to mixed strategies, but we do not need this extent of generality here.}, we represent the distribution of the client's output at the end of a protocol execution intended to compute $f$ as a vector $o\in [0,1]^{|X|}$ indexed by $x\in [|X|]$. Here $o[x]=p$ denotes the probability of outputting $1$ on input $x$.\footnote{We shall consider geometric row distributions both in the real and the ideal model.}
@@ -190,4 +209,5 @@ where $|\beta_i|\leq 2g!\epsilon$. Thus (since $g\geq 2$), picking $\epsilon=1/1
 \bibliographystyle{alpha}
 \bibliography{sample}
 
+\section{Applications to concrete security}
 \end{document}
