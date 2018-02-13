@@ -4,6 +4,7 @@
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{complexity}
 
 %% Sets page size and margins
 \usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
@@ -36,6 +37,8 @@
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\affine}[1]{\mathcal{A}(#1)}
 \newcommand{\atodo}[1]{\textcolor{green}{#1}}
+\newcommand{\CH}[1]{\text{CH}(#1)}
+
 
 \title{Perfect reductions}
 %\author{You}
@@ -68,14 +71,16 @@ TODO.
 
 \paragraph{Geometry.} 
 \begin{definition}[Affine dimension~\cite{Ash14}]
-	For a set of vectors $V=\{v_1,\ldots,v_t\}\in\R^n$, we define their affine dimension $\affine{V}$ as the dimension of the set
+	For a set of vectors $V=\{v_1,\ldots,v_t\}\subseteq\R^n$, we define their affine dimension $\affine{V}$ as the dimension of the set
 	$\{v_i-v_1\}_{i\geq 2}$. 
 \end{definition}
 For a vector $v\in \R^m$, 
 we let $|v|_1=\sum_i|v_i|$ denote its $\ell_1$ norm, and $|v|_\infty=max_i |v_i|$ denote its $\ell_\infty$ norm.
-We say a function $f:X\times Y\rightarrow Z$ is full-dimensional if the affine dimension of the row set of its truth table $F$ is full (equals $(|Z|-1)|X|$).
+For a set of vectirs $V=\{v_1,\ldots,v_t\}\subseteq\R^n$, a linear combination $\sum_i \alpha_iv_i$ where $\sum_i\alpha_i=1$ and $\forall i\alpha_i\geq 0$ is a convex combination of $V$. The convex hall of $V$,
+$\CH{V}=\{u=\sigma_i\alpha_iv_i|u\text{ is a convex combination of }V\}$.
 
 \paragraph{Algebra.}
+
 For a matrix $A\in \F^{n\times n}$, where $\F$ is a field, let
 $|A|$ denote the determinant of $A$. $A^{i,j}$ denotes the $(i,j)$'th co factor of $A$, which is the $(n-1)\times(n-1)$ matrix obtained by removing the $i$'th row and $j$'th column of $A$.
 It is well known that:
@@ -87,57 +92,108 @@ For a pair of matrices $M_1\in \F^{n_1\times m},M_2\in \F^{n_2\times m}$, we den
 
 
 \subsection{Our model}
-We consider secure evaluation of client-server (non interactive, deterministic) functionalities $f:X\times Y\rightarrow Z$ for finite domains $X,Y,Z$, where the client outputs $f(x,y)$ and the server outputs $\bot$ (has no output). By default, we set $Z=\{0,1\}$. We consider secure evaluation of such $f$ in the stand-alone setting, with perfect security, against a non adaptive malicious adversary corrupting a single party. The security notion is the standard simulation-based notion as in~\cite{Gol}.
+We consider secure evaluation of client-server (non interactive, deterministic) functionalities $f:X\times Y\rightarrow Z$ for finite domains $X,Y,Z$, where the client outputs $f(x,y)$ and the server outputs $\bot$ (has no output).\footnote{All the definitions below readily generalize to radomized functionalities $f$, but we focus on deterministic $f$ for simplicity.} 
+
+We consider secure evaluation of such $f$ in the stand-alone setting, with perfect security, against a non adaptive malicious adversary corrupting a single party. The security notion is the standard simulation-based notion as in~\cite{Gol}.
 
 More specifically, we focus 
 on perfect 1-round protocols $\Pi$ in the $\OT{1}{2}$-hybrid model
 securely evaluating $f$, where the client plays the role of the receiver in all OT calls. 
-Alternatively, such protocols can be viewed as a 1-round reduction of evaluating $f$ to securely evaluating the functionality ${\OT{1}{2}}^l$, receiving $l$ bits $c=(c_1,\ldots,c_l)$ from the client and $y=(y_1,\ldots,y_l)$ from the server, 
-where $y_i=(y_{i,0},y_{i,1})$ is a pair of bits.
-For $y,c$ as above, we denote $y[c]=(y_{1,c_1},y_{2,c_2},\ldots,y_{l,c_l})$.
 
-We denote protocols in our setting as tuples $\Pi=(\Pi_C,\Pi_R,\Pi_S)$ of randomized algorithms, where $\Pi_C(x):X\rightarrow \{0,1\}^l$ generates client's queries, $\Pi_R(x,c,v):X\times\{0,1\}^l\times  \{0,1\}^{2l}$ generates client's output based on $x,c$ and OT reply $v$, and $\Pi_S(y):Y\rightarrow \{0,1\}^{2l}$ is server's generator of OT inputs. $\Pi_C$ and $\Pi_R$ share randomness the same randomness $r$.
 
+In our setting, a protocol for evaluating a client-server functionality
+$f:X\times Y\rightarrow Z$ is defined as follows.
+
+\begin{definition}[1-round protocols in OT-hybrid model]\label{def-prot}
+	A protocol for evaluating $f:X\times Y\rightarrow Z$ are tuples $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$ of randomized algorithms, where $\Pi_Q(x):X\rightarrow \{0,1\}^l$ generates client's query $c$. $\Pi_R(x,c,v):X\times\{0,1\}^l\times  \{0,1\}^l\rightarrow Z$ generates client's output based on $x,c$ and OT reply $v$.\footnote{For some, but not all functions $f$, $x$ is not required as an input to $R$, as $C_x\cup C_{x'}=\phi$ for all $x\neq x'$. It is not hard to prove that a sufficient condition on $f$ for having $C_x\cup C_{x'}=\phi$ in all secure protocols for $f$ is the existence of a $2\times 2$ rectangle $\{y,y'\}\times\{x,x'\}$ in which 3 of the entries are identical, and the other entry differs from these three.} $\Pi_D(y):Y\rightarrow \{0,1\}^{2l}$ is server's generator of OT inputs. We refer to $l$ as the communication complexity of $\Pi$.
+\end{definition}
+
+For $s=(s_{1,0},s_{1,1},\ldots,s_{l,0},s_{l,1})\in\{0,1\}^{2l}$,
+and $c\in\{0,1\}^l$, we let $s[c]$ denote $(s_{1,c_1},\ldots,s_{l,c_l})$.
+
+A protocl $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$ as in Definition~\ref{def-prot} with CC $l$ operates in the ${\OT{1}{2}}^l$-hybrid model as described above.\footnote{In particular, it first recieves all inputs and only then returns all the outputs to the client. No rushing such as sending inputs to a certain OT instance after getting outputs from other OT instances is possible.}
+That is, it is specified by a pair of randomized turing machines $\Pi^?_C,\Pi^?_S$ with oracle access to an idealized functionality ${\OT{1}{2}}^l$ operating as follows
+\begin{enumerate}
+	\item[$\Pi^?_C(x;r):$] 
+	Let $c=\Pi_Q(x;r)$. Send $c$ as input to the ${\OT{1}{2}}^l$ oracle, and let $v$ denote the oracle's output. Output $\Pi_R(x,c,v;r)$.
+	\item[$\Pi^?(y;r):$] Let $s=\Pi_D(y;r)$, and send it to the 
+	${\OT{1}{2}}^l$ oracle (where $(s_{i,0},s_{i,1})$ go to the $i$'th $\OT{1}{2}$ instance).  
+\end{enumerate}
+Both algorithms $\Pi_C,\Pi_S$ run in parallel, in a single round.
+We will usually use the notation $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$ to denote protocols, while $\Pi_C,\Pi_S$ are implicit.
+
+Note that the above definition of a protocol is merely syntactic.
 \subsubsection{Restating security requirements geometrically.}
 We take a similar approach to that of~\cite{Ash14}
 to representing protocols and their security requirements geometrically.
+More specifically, we represent the client's output distributions vector for a given server's strategy as a vector over $\R^t$ for a suitable $t$. This vector bundles together client output dsitributions for all client's inputs, with a subset of coordinates corresponding to each client's input. A protocol $\Pi$ defines a region $P_S$ of achievable distributions corresponding to all possible (possibly malicious) server strategies.
+
+Similarly, for a given client's strategy, we consider the client's vector of \emph{views}, with a subset of coordinates corresponding to each server's input $y$.  Similarly to $P_S$, $\Pi$ defines a region $P_C$ of achievable distributions corresponding to all client's strategies. 
+
+On the other hand, we consider distribution vectors achievable 
+in the ideal model, and corresponding regions $\tilde{P}_S,\tilde{P}_C$ of all achievable distributions corresponding to possible server strategies and client's strategies respectively.
+Jumping ahead, our representation of distributions will be such that the regions $\tilde{P}_S,\tilde{P}_C$ will roughly correspond to convex combinations of row and column vectors of the function's truth table.
+
+To achieve security against a malicious server and client respectively, we require that $P_S\subseteq \tilde{P}_S, P_C\subseteq \tilde{P}_C$.
+For honest correctness (that is, the protocol always outputs the correct value if both parties behave honesly), we make a separate requirement on distribution vectors corresponding to valid client and server strategies. While the first two requirements are readily expressed as a single LP (linear program)~\cite{}, it is unclear how to incorporate the third requirement into a linear program. 
+
 
 \paragraph{Geometric representation of client's output distributions.}
-Fix $Z=\{0,1\}$, and a protocol $\Pi=(\Pi_C,\Pi_R,\Pi_S)$. For a given server's strategy $s^*\in\{0,1\}^{2l}$ for its OT oracle input\;\footnote{This notion naturally generalizes to mixed strategies, but we do not need this extent of generality here.}, we represent the distribution of the client's output at the end of a protocol execution intended to compute $f$ as a vector $o\in \R^{|X|}$ indexed by $x\in [|X|]$. Here $o_x=p$ denotes the probability of outputting $1$ on input $x$. We refer to such a distribution corresponding to some server's strategy $s^*$ as a \emph{geometric row distribution} for $\Pi$, or just \emph{row distribution} for short. 
-We shall also consider geometric row distributions for the ideal model, corresponding to server's input distribution $y\in Y$, referring to them as a row distribution for $f$. We ommit $f,\Pi$ whenever it is clear from the context.
+Fix a protocol $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$
+as in Defition~\ref{def-prot} for evaluating a functionality $f:X\times Y\rightarrow Z$. For the sake of defining our output distributions we view the protocol as merely randomized mapping from $X\times Y$ to client outputs $Z$, and do not require it to securely evaluate $f$, or even correctly evaluate it if everyone behaves honestly.
 
-Observe that the single number $o_x$ uniquely encodes a distribution over the client's output set $\{0,1\}$.\footnote{The vector $o$ represents $|X|$ separate distributions. Nothing is implied about the correlation between client's output on different inputs.} We refer to such a distribution as a \emph{geometric row distribution}. Similarly, we consider \emph{geometric column distributions}: for a given client's strategy $c^*\in\{0,1\}^l$ for its input to the OT oracle, we consider the corresponding \emph{geometric column} distribution vector $o\in \{0,1\}^{|Y|}$ indexed by  $y\in [|Y|]$, where $o_y$ is the probability of the client outputting $1$ for server input $y$.
+\paragraph{Boolean functions.} Fix $Z=\{0,1\}$. For a given server's strategy $\Pi^*_D(x=y;r)=s^*$ for some fixed $s^*\in\{0,1\}^{2l}$\footnote{This notion naturally generalizes to randomized strategies, but we do not need this extent of generality here.}, we consider the distributions of the client's output at the end of a protocol execution $\Pi^*=(\Pi_Q,\Pi_R,\Pi^*_D)$ (that is, a protocol resulting from $\Pi$ when the server runs $\Pi^*_D$ instead of $\Pi_D$). We denote this set of distributions
+by a vector $o\in \R^{|X|}$ indexed by $x\in [|X|]$. Here $o_x=p$ denotes the probability of the client outputting $1$ on input $x$
+That is,
+\[o_x = Pr_r[\Pi_Q(x;r)=c;\Pi_R(x,c,s^*[c])=1].\]
 
-Generalizing for larger $Z=\{0,1,\ldots,k-1\}$, a (geometric) row distribution $o\in \mathbb{R}^{(k-1-1)|X|}$, has entries labeled by
+We refer to such a vector corresponding to some (possibly invalid) server's strategy $s^*$ as a \emph{geometric row distribution} for $\Pi$. 
+We shall also consider geometric row distributions for the ideal model evaluating $f$, corresponding to server's input distributions $y\in Y$, referring to them as a row distribution for $f$. We ommit $\Pi,f$ whenever clear from the context.
+
+Observe that the single number $o_x$ uniquely encodes a distribution over the client's output set $\{0,1\}$ on input $x$.\footnote{The vector $o$ represents $|X|$ separate distributions, one for each client's input $x$. Nothing is implied about the correlation between client's outputs on different inputs for a given server's strategy $s^*$.} Similarly, we consider \emph{geometric column distributions} for $\Pi$: for a given client's strategy $c^*\in\{0,1\}^l$ for its input to the OT oracle, we consider the corresponding \emph{geometric column} distribution vector $o\in \{0,1\}^{|Y|}$ indexed by  $y\in [|Y|]$, where $o_y$ is the probability of the client outputting $1$ for server input $y$. That is:
+\[o_y = Pr_r[\Pi_R(x,c^*,\Pi_D(y;r)[c^*])=1].\]
+
+\paragraph{General functions.} Generalizing for larger $Z=\{0,1,\ldots,k-1\}$, a (geometric) row distribution $o\in \mathbb{R}^{(k-1-1)|X|}$, has entries labeled by
 pairs $(x,i)$ where $x\in [|X|],i\in Z\setminus{\{0\}}$, and $o_{(x,i)}$ denotes the probability of outputting $i$ on input $x$. Thus, for every $x,i$ we have $\sum_j o_{(x,j)}\leq 1$, and $o_{(x,i)}\geq 0$.\footnote{The decision to exclude 0 is merely auesthetic, intended to remain consistent with standard binary truth tables.}
 As in the case of $|Z|=2$, this vector fully represents the client's output distribution for each input $x$. A similar extension can be made for (geometric) row distributions. For a given $x\in X$, let $o_x$ denote the sub-vector $(o_{x,z})_{z\in [k-1]}$.
-Also, the notion naturally extends to secure computation of randomized client-server functionalities $f:X\times Y\rightarrow Z$. Here exactly the same notions of client output distributions apply.
+%Also, the notion naturally extends to secure computation of randomized client-server functionalities $f:X\times Y\rightarrow Z$. Here exactly the same notions of client output distributions apply.
 
-\paragraph{Truth tables.} In the truth table $F$ of $f$, we index rows by elements of $Y$ and columns by elements of $X$. For $Z=\{0,1\}$, the truth table representation we consider is just the standard one: a table where entry $(y,x)$ equals $f(x,y)$. We use $Y_y$ to denote the row vector ($X_x$ to denote the column) in $F$ corresponding to $y$ ($x$).
-We observe that each row $Y_y$ in this case is a geometric row distribution in the ideal model, where the server inputs $y$. We can interpret $Y_{y,x}$ as $f(x,y) = p$, where $p$ is the probability of outputting $1$ (either $p=0$ or $p=1$). 
+\paragraph{Truth tables.} In the truth table $F$ of $f$, we index rows by elements of $Y$ and columns by elements of $X$. For $Z=\{0,1\}$, the truth table representation we consider is just the standard one: a table where entry $(y,x)$ equals $f(x,y)$. We use $F_y$ to denote the row vector ($X_x$ to denote the column) in $F$ corresponding to $y$ ($x$).
+We observe that each row $F_y$ in this case is a geometric row distribution in the ideal model, where the server inputs $y$. We can interpret $Y_{y,x}$ as $f(x,y) = p$, where $p$ is the probability of outputting $1$ (either $p=0$ or $p=1$). 
 
 
-Let us generalize this form to larger $Z$. We represent the truth table in "unary", where for each $y,x$ we have $|Z|-1$ columns $(x,z)_{z\leq |Z|-1}$, and we set $F((x,z),y)=1$
-if $f(x,y)=z$, and $F((x,z),y)=0$ otherwise (if $f(x,y)=|Z|$, all entires $F((x,z),y)$) will be $0$).\footnote{This is instead of having a single entry for each $(x,y)$ with values in $Z$.}
-Again, each row $Y_y$ is a valid geometric row distribution in the ideal world (corresponding to an input of $y$).
+Let us generalize this form to larger $Z$. We represent the truth table in "unary", where for each $y,x$ we have $|Z|-1$ columns $(x,z)_{z\in [|Z|-1]}$, and we set $F((x,z),y)=1$
+if $f(x,y)=z$, and $F((x,z),y)=0$ otherwise (if $f(x,y)=0$, all entires $F((x,z),y)$) will be $0$).\footnote{This is instead of having a single entry for each $(x,y)$ with values in $Z$.}
+Again, each row $F_y$ is a valid geometric row distribution in the ideal world (corresponding to a server input of $y$).
 
 
 \paragraph{Definition of security}
-We require stand-alone security against a single malicious party. This requirement can be restated as three separate requirements. The equivalence to the original 
+We require stand-alone security against a single malicious party. This requirement can be restated as three separate requirements.
+
+Let us recall the standard definitions of security against malicious parties in the ${\OT{1}{2}}^l$-hybrid model.
+\begin{definition}
+Let $\Pi$ denote a protocol for evaluating a function $f$ as in Defintion~\ref{def-prot} in the ${\OT{1}{2}}^l$-hybrid model. Then it evaluates $f$ with malicoius security against a non adaptive malicious adversary if it satisfies:
+\begin{itemize}
+	\item[Security against malicious servers:]
+	For all algorithms $\Pi^*_D(y;r)$, there exists a randomized simulator algorithm $Sim^*_D(y;r):Y\rightarrow Y$ such that for all $x\in X,y\in Y,r_s$, the following equality of distributions holds.
+	\[\Pi_R(x,\Pi_Q(x;r_c),\Pi_D(y;r_s))=f(x,Sim^*_D(y;r_s))\]
+	\footnote{Wlog. we may assume $\Pi^*_D$ is deterministic. Also note that we do not require that the algorithms (as we generally consider finite functionalities). Due to the simple structure of $\Pi$ the above requirement can be further simplified to requiring that for all $.$ there exists a distribution $Y^*$ over $Y$ such that 
+	\[\Pi_R(x,\Pi_Q(x;r_c),s^*)=f(x,Y^*)\].}
+\end{itemize}
+\end{definition}
+
 \begin{definition}\label{perfect-security}
 We say that a reduction $\Pi$ for evaluating $f:X\times Y\rightarrow Z$ as above is perfectly secure against a single malicious party if it satisfies:
 \begin{enumerate}
-\item Client correctness: For every server's input $s^*\in {0,1}^{2l}$, the corresponding row distribution $o^*$ at the end
-of the protocol execution corresponds to a convex combination of the rows of $f$'s truth table. That is:
-\[o^* = \sum_i \alpha_iY_i\text{ where } \alpha_i\geq 0,\sum_i\alpha_i=1\]
-\item Server privacy: View the protocol $\Pi$ as a modified protocol $\Pi'$ performing an evaluation of a randomized functionality $f':X\times Y\rightarrow\{0,1\}^l$, where the client's output is its (partial) view $s[c]$ during the protocol execution. 
+\item Client correctness: For every server's strategy $s^*\in \{0,1\}^{2l}$, the corresponding row distribution $o^*$ of $f'$
+is in $\CH{\{F_y\}_{y\in Y}}$, where the $F_y$'s are the rows of the truth table $F$ of $f$.
+\item Server privacy: Define a modified protocol $\Pi'$ where the client's output is replaced by its (partial) view $s[c]$ recieved from the OT oracle. That is, $\Pi'=(\Pi_Q,\Pi'_R,\Pi_D)$, where $\Pi'_R(x,c,v)=v$. This protocol is a mapping from $X\times Y$ to $Z'=\{0,1\}^l$.
 
-We say that a column distribution vector $m_x$ is consistent for $x$, if for all $y,y'$ such that $f(x,y)= f(x,y')$ and $i\in [|Z|-1]$, we have $m_x[(y,i)]=m_x[(y',i)]$. 
-We require that for each client strategy $c^*\in\{0,1\}^t$, 
-the resulting column distribution (of $s[c]$, for evaluating $f'$) is a convex combination
-\[\sum_{x\in X} \alpha_xm_x\] where each $m_x$ is consistent for $x$.
+We say that a column distribution for $\Pi'$ vector $m_x$ is consistent with $f,x$, if for all $y,y'$ such that $f(x,y)= f(x,y')$ and $i\in [2^l-1]$, we have $m_x[(y,i)]=m_x[(y',i)]$. 
+We require that for each client strategy $\Pi^*_Q(x;r)=c^*$ for $c^*\in\{0,1\}^l$, the resulting column distribution in $\Pi'$ is a convex combination
+\[\sum_{x\in X} \alpha_xm_x\] where each $m_x$ is consistent for $f,x$.
 
-\item Honest correctness: Let $C_x=\support(\Pi_C),S_x=\support(\Pi_S)$. Then for all $c\in C_x,s\in S_y$, $\Pi_R(x,c,s[c])=f(x,y)$.\footnote{For some, but not all functions $f$, $x$ is not required as an input to $R$, as $C_x\cup C_{x'}=\phi$ for all $x\neq x'$. It is not hard to prove that a sufficient condition on $f$ for having $C_x\cup C_{x'}=\phi$ in all secure protocols for $f$ is the existence of a $2\times 2$ rectangle $\{y,y'\}\times\{x,x'\}$ in which 3 of the entries are identical, and the other entry differs from these three.} 
+\item Honest correctness: Let $C_x=\support(\Pi_Q(x)),S_y=\support(\Pi_D(y))$. Then for all $c\in C_x,s\in S_y$, $\Pi_R(x,c,s[c])=f(x,y)$.
 \end{enumerate}
 \end{definition}
 
@@ -147,35 +203,70 @@ We will also need a relaxed definition of client correctness, where the client m
 We say a protocol $\Pi$ for computing $f$ is secure with $\epsilon$-relaxed client correctness, if it satisfies Definition~\ref{perfect-security}, but client correctness is relaxed as follows. We allow the client to output a special error symbol $\bot$, in particular, we reinterpret the function $f$ as having an output domain $Z'=Z\cup\{\bot\}$. 
 We say a row distribution $o$ is admissible, if it is a convex combination 
 \[o^* = \sum_i\alpha_io_i\]
-where each $o_i$ is either a row $Y_y$ in the truth table $F$, or is the all-$\bot$ vector $o_\bot$. 
+where each $o_i$ is either a row $F_y$ in the truth table $F$, or is the all-$\bot$ vector $o_\bot$. 
 
 Then, for every deterministic server strategy $s^*\in\{0,1\}^{2l}$, the resulting row distribution $o^*$ satisfies either:
-(1) There exists an admissible row distribution $o$ where $\alpha_\bot\geq 1-\epsilon$ such that $|o_x-o^*_x|_1\leq \epsilon$.\footnote{This simply means that for every input $x$, every non-$\bot$ value is output with probability at most $f$} Or  (2)
+(1) There exists an admissible row distribution $o$ where $\alpha_\bot\geq 1-\epsilon$ such that $|o_x-o^*_x|_1\leq \epsilon$ for all $x\in X$.\footnote{This simply means that for every input $x$, a non-$\bot$ value is output with probability at most $\epsilon$} Or  (2)
 There exists an admissible row distribution $o$, so that $o^* = o$.
 \end{definition}
 
-\section{A perfect reduction for any full-rank matrix}
-A protocol satisfying Definition~\ref{weak-security} for all $f$ has been put forward in~\cite{IKOPS}\footnote{Consider their statistical construction for $NC^0$ functions. As we are not concerned with efficiency, but rather consider finite functions, the construction works for all functions, as far as we are concerned.}
+For client-server functionalities and protocols $\Pi$ as in Definition~\ref{def-prot} as we consider, our Definitoin~\ref{def-security} of perfect security is equivalent to standard perfect security against malicious adversaries, and the equivalence is straight forward to prove.
+\begin{lemma}
+	Let $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$ be a protocol for evaluating a client-server functionality $f:X\times Y\rightarrow Z$. $\Pi$ is perfectly secure by Definition~\ref{perfect-security} iff. it is perfectly secure against a single malicious party in the ${\OT{1}{2}}^l$-hybrid model according to standard simulation based definition~\cite{} (against a non-adaptive malicious adversary). %If it is weakly secure, then it is perfectly secure against malicious clients and statistically secure against malicious servers in the ${\OT{1}{2}}^l$-hybrid model. 
+\end{lemma}
 
-\begin{theorem}\label{thm-IVWD}
-Let $f:X\times Y\rightarrow Z$ denote any (finite) function.
-Then, there exists $\epsilon_0$, such that for all $\epsilon \leq \epsilon_0$, there exists a protocol $\Pi$  evaluating $f$ with $\epsilon$-relaxed client correctness. 
-The complexity of the protocol is $\ell(\epsilon,|X|,|Z|)=polylog(\epsilon^{-1})\log|Z|+polylog(\epsilon^{-1},\log{|X|})$ parallel $\OT{1}{2}$ calls.
+
+\section{A perfect reduction for any full-rank matrix}
+Our starting point is a protocol as in Definition~\ref{def-prot} (1-round protocol in the $(\OT{1}{2})^l$-hybrid model for some $l$) by~\cite{IKOPSW11}[Section 3]. We denote this protocol by $\Pi_{\text{IKOPSW}}$. It is stated for function with $NC_0$ circuits, but we restate it for general function (families). The reason the protocol in~\cite{IKOPSW11} is restricted to $NC_0$ functionalities is for improving concrete efficiency, which is not a concern in our paper.
+Otherwise, their construction
+
+\begin{theorem}
+	Let $f:X\times Y\rightarrow Z$ denote any (finite) function.
+	Then for all $\epsilon \geq 0$, $\Pi_{\text{IKOPSW}}$ evaluates $f$ with $\epsilon$-relaxed client correctness. 
+	Let $h_i$ denote the smallest formula for evaluating the $i$'th bit of $f(x,y)$, and let $h = max_{i\leq \log(|Z|)} h_i$.
+	Then, $\Pi$ has communication complexity of $l=\log(|Z|)\tilde{O}(\log(|X|) (\log({epsilon^{-1}})+h)^2)+poly(\epsilon^{-1})$.
 \end{theorem}
+
+We transform it into a perfectly secure protocol in two steps. 
+First, we transform it into a perfectly server-private (yet not perfectly client-correct) protocol $\Pi'$. Then we transform $\Pi'$ into $\Pi''$ preserving perfect server privacy and adding perfect client correctness.  
+
+\subsection{Making $\Pi_{\text{IKOPSW}}$ perfectly server-private}
+
+In a nutshell, the $\Pi_{\text{IKOPSW11}}$ protocol is not perfectly server-private because the watchlists used allow to view a certain OT channel.
+The high level idea here is to replace the wat
+
+$\Pi_{\text{IKOPSW}}$
+
+In this section we describe the first step of the construction.
+
+Definition~\ref{weak-security} for all $f$ has been put forward in~\cite{IKOPS}\footnote{Consider their statistical construction for $NC^0$ functions. As we are not concerned with efficiency, but rather consider finite functions, the construction works for all functions, as far as we are concerned.}
+
+\begin{definition}
+	We say a function $f:X\times Y\rightarrow Z$ is full-dimensional if the affine dimension of the row set of its truth table $F$ is the maximal possible - equals $(|Z|-1)|X|$.
+\end{definition}
+
+\begin{theorem}\label{thm-IVWD}[~\cite{}]
+Let $f:X\times Y\rightarrow Z$ denote any (finite) function.
+Then for all $\epsilon \geq 0$, there exists a protocol $\Pi$ evaluating $f$ with $\epsilon$-relaxed client correctness. 
+Let $h_i$ denote the smallest formula for evaluating the $i$'th bit of $f(x,y)$, and let $h = max_{i\leq \log(|Z|)} h_i$.
+Then, $\Pi$ has communication complexity of $l=\log(|Z|)\tilde{O}(\log(|X|) (\log({epsilon^{-1}})+h)^2)$.
+
+\end{theorem}
+
 \atodo{To obtain concrete OT complexity of our resulting perfect protocol, we should calculate the concrete dependence on $\epsilon$.} 
 
-We show how to transform a protocol into a perfectly secure one when $f$ is full-dimensional. 
+The main technical contribution of this paper is a way to transform a protocol into a perfectly secure one when $f$ is full-dimensional. 
 \begin{corollary}
 Let $f:X\times Y\rightarrow Z$ denote a full-dimensional function.
 Let $g=|X|(|Z|-1)$.
-Then there exists a protocol $\Pi$ evaluating $f$ (with perfect security)
-and OT complexity $l=\ell(max(\epsilon_0,1/10(g-1)g!), |X|, |Z|)$, where $\ell,\epsilon_0$ is as in Theorem~\ref{thm-IVWD}.
+Then there exists a protocol 1-round protocol evaluating $f$ with perfect security against a malicious adversary in the ${\OT{1}{2}}^l$-hybrid model
+for $l=\ell(max(\epsilon_0,1/10(g-1)g!), |X|, |Z|)$, where $\ell,\epsilon_0$ is as in Theorem~\ref{thm-IVWD}.
 
 \end{corollary}
 
 \paragraph{Proof sketch.}
 
-The idea is simple: start with protocol $\Pi$ with  $\epsilon$-relaxed client security for $f$ guaranteed by Theorem~\ref{thm-IVWD}. We pick a sufficiently small $\epsilon>0$, to be set later. Fix some vector $v$ in the convex hall of $F$'s (not $F'$'s) rows $Y_y$, which is ``far enough from the edges'' of that polygon.
+The idea is simple: start with protocol $\Pi$ with  $\epsilon$-relaxed client security for $f$ guaranteed by Theorem~\ref{thm-IVWD}. We pick a sufficiently small $\epsilon>0$, to be set later. Fix some vector $v$ in the convex hall of $F$'s (not $F'$'s) rows $F_y$, which is ``far enough from the edges'' of that polygon.
 By ``far enough'' we mean that adding up to $\pm\epsilon$ in every coordinate
 results in a point which is still inside the polygon.
 Our protocol $\Pi'$ proceeds as follows. Whenever $\Pi$ outputs $\bot$ as an output on input $x$, output  a distribution consistent with $v_x$. Otherwise, output the value output by $\Pi$. 
