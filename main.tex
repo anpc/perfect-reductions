@@ -45,7 +45,7 @@
 \newcommand{\CH}[1]{\text{CH}(#1)}
 \newcommand{\INT}{\Pi_{\text{int}}}
 
-\title{Perfect reductions}
+\title{Perfectly secure 2PC in the OT-hybrid model}
 \author{Anat Paskin-Cherniavsky}
 
 \begin{document}
@@ -63,7 +63,7 @@ On the negative side a large class is known, as implied by the fairness literatu
 computational complexity to evaluate with error $neg(k)$ in the OT hybrid model (in fact, they are known to require super polynomial round complexity). 
 This implies that these functionalities not computble with fairness are also not computable with perfect security (in the OT-hybrid model). For symmetric boolean functionalities, this class been fully characterized~\cite{}.
 
-Back to the statistical world, quite surprisingly~\cite{IKOPS11} demonstrate that all client-server functionalities can be efficiently reduced to $\OT{1}{2}$ with statistical full security (no abort) in only \emph{one round}. Here a somewhat stronger oracle that securely evaluates ${\OT{1}{2}}^l$ (in particular, the client submits all inputs and recieves all outputs simultaneously) is assumed.\atodo{Can we get rid of this assumption? Should verify later. Can I say it is a standard assumption when considering the OT hybrid model ?}
+Back to the statistical world, quite surprisingly~\cite{IKOPS11} demonstrate that all client-server functionalities can be efficiently reduced to $\OT{1}{2}$ with statistical full security (no abort) in only \emph{one round}. Here a somewhat stronger oracle that securely evaluates ${\OT{1}{2}}^l$ (in particular, the client submits all inputs and recieves all outputs simultaneously) is assumed.\atodo{Can we get rid of this assumption? Should verify later. Can I say it is a standard assumption in literature in the OT hybrid model ?}
 
 This result demonstrates that for inefficient protocols, some functions require much higher round compliexty than others (in the OT hybrid model) than others to evaluate with statistical security In particular, client-server functionalities vs. symmetric coin tossing~\cite{Cleve86}.
 
@@ -174,7 +174,7 @@ Here full dimension properties of $f$ alone will not generally suffice, as for (
 
 \paragraph{Aknowledgement.}
 
-The author is very greatful to Yuval Ishai for suggesting this question, and for many stimulating and fruitful discussions. 
+The author is very greatful to Yuval Ishai for suggesting this question, and for many helpful discussions. 
 
 \section{Preliminaries}
 
@@ -359,6 +359,7 @@ As mentioned above, for client-server functionalities, the standard requirement 
 %	\[\Pi_R(x,\Pi_Q(x;r_c),s^*)=f(x,Y^*)\].}
 %\end{itemize}
 %\end{definition}
+\atodo{Is this defintion acceptable, or should I use the standard definition, with auxiliarry input $z$ and efficient simulation?}
 For such functionalities and protocols $\Pi$ as in Definition~\ref{def-prot} the standard definition of perfect security against malicious parties is ``almost'' equivalent to the following definition.
 It would be fully equivalent if it required simulation of efficient (in $k$) adversaries is also efficient. Our protocols in fact satisfy the stronger definition, as we prove in the full version. We ignore efficiency issues altogether in this work for the sake of simplicity. 
 
