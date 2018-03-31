@@ -54,28 +54,25 @@
 \begin{abstract}
 We initiate the study of perfect (rather than merely statistical) reductions among cryptographic primitives. For simplicity, we focus on finite functionalities.
 
-While 1-out-of-2 bit-OT (and several other functionalities) is known to be complete for secure 2PC for all functionalities since the seminal work of Killian~\cite{Killian88}. This work only offers a statistically secure with abort (efficient) protocol in the OT-hybrid model (requiring no further computational assumptions). In general, fairness can not be guaranteed, and only security with abort is achievable~\cite{Cleve86}. If the protocol is not required to be efficient in the security parameter $k$, then all 2PC functionalities can be securely evaluated~\cite{GK10} with statistical security in the OT hybrid model.
-As opposed to the statistical setting, it is not known whether OT is complete for perfectly secure 2PC. Furthermore, only a few examples of functionalities that have such reductions are known: we are only aware of string-OT~\cite{BCS96} and TO~\cite{WolfW06} (OT with reversed roles) as perfectly reducible to $\OT{1}{2}$.
-
-On the negative side a large class is known, as implied by the fairness literature. By definition, functionalities not securely computable with fairness require super-polynomial in $k$ 
-computational complexity to evaluate with error $neg(k)$ in the OT hybrid model (in fact, they are known to require super polynomial round complexity). 
-This implies that these functionalities not computable with fairness are also not computable with perfect security (in the OT-hybrid model). For symmetric boolean functionalities, this class been fully characterized~\cite{}.
-
-Back to the statistical world, quite surprisingly~\cite{IKOPS11} demonstrate that all client-server functionalities can be efficiently reduced to $\OT{1}{2}$ with statistical full security (no abort) in only \emph{one round}. Here a somewhat stronger oracle that securely evaluates ${\OT{1}{2}}^l$ (in particular, the client submits all inputs and receives all outputs simultaneously) is assumed.%\atodo{Can we get rid of this assumption? Should verify later. Can I say it is a standard assumption in literature in the OT hybrid model ?}
-
-This result demonstrates that for inefficient protocols, some functions require much higher round complexity than others (in the OT hybrid model) than others to evaluate with statistical security In particular, client-server functionalities vs. symmetric coin tossing~\cite{Cleve86}.
-
-Motivated by this relative ``ease'' of client-server functionalities for statistically secure 2PC in the OT hybrid model,
-we start by studying perfect reductions to OT for this class of functions. We prove that a large class of client-server functions is perfectly reducible to $\OT{1}{2}$.\footnote{Note that here the protocol is efficient by definition, as its complexity does not depend on the security parameter.}
- 
-We prove that for ``most'' client-server functions of the form $f:X\times Y\rightarrow \{0,1\}$, where server domain size $|Y|$ is larger than client domain size $X$, a $g(|X|,|Y|)=\Omega(1)$-fraction of functions are perfectly reducible to 1-out-of-2 OT. This fraction grows roughly as $1-exp(|X|-|Y|)$.
-Furthermore, our reduction is 1-round using an oracle to secure evaluation of ${\OT{1}{2}}^l$. More generally, for $f:X\times Y\rightarrow Z$, $\Omega(1)$ of the functions with $|Y|>|X|(|Z|-1)$ are perfectly reducible to OT in 1 round. As an example, this class contains $\text{2-out-of-5-OT}$.
-
-Our work leaves open the question of whether all finite client-server functionalities are reducible to bit-OT (not necessarily in one round). 
-Another open question is whether 2PC functionalities that do have perfectly secure 
-protocols in the OT hybrid model differ in round complexity, as is the case for statistical protocols.
- 
 In addition to the obvious theoretical appeal of the question towards better understanding secure computation, perfect, as opposed to statistical reductions may be useful for designing MPC protocols with high concrete efficiency, achieved by eliminating the dependence on a security parameter.
+
+1-out-of-2 bit-OT (dubbed OT) was shown to be complete for statistically secure 2PC for all functionalities [Kil88, IPS08]. Existing protocols in the OT-hybrid model only offer statistically secure with abort (efficient) protocols (requiring no further computational assumptions). In general, fairness can not be guaranteed, and only security with abort is achievable [Cleve86]. If the protocol is not required to be efficient in the security parameter $k$, then all 2PC functionalities can be securely evaluated [GK10] with statistical security in the OT-hybrid model.
+
+As opposed to the statistical setting, it is not known whether OT is complete for perfectly secure 2PC. Furthermore, only a few examples of functionalities that have such protocols are known: we are only aware of string-OT and TO (OT with reversed roles) as perfectly reducible to OT.
+On the negative side, a large class is known, as implied by the fairness literature. By definition, functionalities not securely computable with fairness require super-polynomial in $k$ 
+computational (and round) complexity to evaluate with error $neg(k)$ in the OT-hybrid model. 
+This implies that these functionalities not computable with fairness are also not computable with perfect security (in the OT-hybrid model). For symmetric boolean functionalities, this class been fully characterized [ABMO15].
+
+Back to the statistical world, quite surprisingly [IKOPS11] demonstrate that all client-server functionalities can be efficiently reduced to OT with statistical full security (no abort) in only one round.
+
+Motivated by this relative ``ease'' of client-server functionalities for statistically secure 2PC in the OT-hybrid model, we study perfect reductions to OT for this class of functions.
+We prove that for many client-server functions of the form $f: X\times Y\rightarrow \{0,1\}$, where server domain size $|Y|$ is larger than client domain size $X$, have a perfect reduction to OT.
+More precisely, a $g(|X|,|Y|)=\Omega(1)$-fraction of functions are perfectly reducible to OT. This fraction grows roughly as $1-exp(|X|-|Y|)$.
+Furthermore, our reduction is 1-round using an oracle to secure evaluation of ${\text{OT}}^l$ (as in [IKOPS11]). As an example, this class contains $\text{2-out-of-5-OT}$.
+More generally, for $f: X\times Y\rightarrow Z$, $\Omega(1)$ of the functions with $|Y|>|X|(|Z|-1)$ are perfectly reducible to OT in 1 round. 
+
+Our work leaves open the question of whether all finite client-server functionalities are perfectly reducible to OT (not necessarily in one round). 
+Another open question is whether 2PC functionalities that do have perfectly secure protocols in the OT hybrid model differ in round complexity, as is the case for statistical protocols.
 \end{abstract}
 
 \section{Introduction}
