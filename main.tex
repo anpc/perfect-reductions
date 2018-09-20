@@ -1,4 +1,44 @@
-\documentclass[a4paper]{article}
+%\def\draft{1} % for draft version, set draft = 1
+%\def\fullV{0}
+%&pdflatex
+\def\IsDraft{} % set for draft version
+%\def\IsSubmission{} % set for submission version
+%\def\IsLLNCS{} % set for draft version
+%\def\IsAnon{} % set for an anonymous version
+%\def\IsCR{} % set for camera ready version
+
+\ifdefined\IsLLNCS
+\documentclass{llncs}
+\usepackage{amsfonts,amsmath,amssymb,boxedminipage,color,url,nccmath}
+\pagestyle{plain}
+\else
+\documentclass[11pt]{article}
+\usepackage{amsfonts,amsmath,amssymb,amsthm,boxedminipage,color,url,fullpage,nccmath}
+\fi
+
+%\def\IsDVI{} % set to resolve conflict with hyperref when using DVI viewer
+ \ifdefined\IsDVI
+ \usepackage[hypertex,pdfstartview=FitH,colorlinks,linkcolor=blue,filecolor=blue,citecolor=blue,urlcolor=blue]{hyperref} % blue linkss
+ \else
+\usepackage[pdfstartview=FitH,colorlinks,linkcolor=blue,filecolor=blue,citecolor=blue,urlcolor=blue]{hyperref} % blue linkss
+\fi
+
+\usepackage{enumerate,paralist}
+\usepackage[labelfont=bf]{caption}
+
+\usepackage{lmodern}% to remove LaTeX font warnings (Using lmodern removes this restriction by allowing font sizes at arbitrary sizes)
+
+%\usepackage[bottom]{footmisc} % to make the footnote stay at the bottom of the page...
+\interfootnotelinepenalty=500
+\usepackage{float}
+\usepackage{aliascnt}
+\usepackage[numbers]{natbib} % \citet{foo} -> Foo et al. [5]
+
+\usepackage{cleveref}
+\usepackage{xspace}
+\usepackage{xstring}
+
+%\documentclass[a4paper]{article}
 
 %% Language and font encodings
 \usepackage[english]{babel}
@@ -14,134 +54,223 @@
 \usepackage{amsthm}
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
-\usepackage[colorlinks=true, allcolors=blue]{hyperref}
-\usepackage{enumitem}  
-\setitemize{leftmargin=*, align=left}
+%\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+%\usepackage{enumitem}  
+%\setitemize{leftmargin=*, align=left}
+
+\input{macros}
  
 %\usepackage{xcolor}
 %\newcommand\todo[1]{\textcolor{red}{#1}}
 
-\newtheorem{definition}{Definition}[section]
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{conjecture}[theorem]{Conjecture}   
-\newtheorem{claim}[theorem]{Claim}
-\newtheorem{remark}{Remark}
-\newtheorem{observation}{Observation}
-\newtheorem{fact}{Fact}
-\newtheorem{construction}{Construction}
-
-\newcommand{\OT}[2]{#1\text{-out-of-}#2\text{-bit-OT}}
-\newcommand{\TO}[2]{#1\text{-out-of-}#2\text{-bit-TO}}
-\newcommand{\sOT}[3]{#1\text{-out-of-}#2\text{\;$#3$-string-OT}}
-\newcommand{\support}{\mathrm{support}}
-\newcommand{\F}{\mathbb{F}}
-\newcommand{\Z}{\mathbb{Z}}
-\newcommand{\R}{\mathbb{R}}
-\newcommand{\affine}[1]{\mathcal{A}(#1)}
+% \newtheorem{definition}{Definition}[section]
+% \newtheorem{theorem}{Theorem}[section]
+% \newtheorem{lemma}[theorem]{Lemma}
+% \newtheorem{proposition}[theorem]{Proposition}
+% \newtheorem{corollary}[theorem]{Corollary}
+% \newtheorem{conjecture}[theorem]{Conjecture}   
+% \newtheorem{claim}[theorem]{Claim}
+% \newtheorem{remark}{Remark}
+% \newtheorem{observation}{Observation}
+% \newtheorem{fact}{Fact}
+% \newtheorem{construction}{Construction}
+\newcommand{\bnote}[1]{\authnote{Bar}{#1}}
+\newcommand{\anote}[1]{\authnote{Anat}{#1}}
+\newcommand{\Bnote}[1]{\authnote{Bar}{#1}}
+\newcommand{\Anote}[1]{\authnote{Anat}{#1}}
 \newcommand{\atodo}[1]{\textcolor{purple}{TODO: #1}}
-\newcommand{\CH}[1]{\text{CH}(#1)}
-\newcommand{\INT}{\Pi_{\text{int}}}
 
-\title{On perfectly secure 2PC in the OT-hybrid model}
-\author{Anat Paskin-Cherniavsky}
+\newcommand{\OT}{\operatorname{OT}}
+\newcommand{\bOT}[2]{#1\text{-out-of-}#2\text{ bit-}\OT}
+\newcommand{\TO}[2]{#1\text{-out-of-}#2\text{ bit-}\operatorname{TO}}
+\newcommand{\sOT}[3]{#1\text{-out-of-}#2~#3\text{-string-}\OT}
+
+\newcommand{\support}{\mathrm{support}}
+
+\renewcommand{\F}{\mathbb{F}}
+% \newcommand{\Z}{\mathbb{Z}}
+% \newcommand{\R}{\mathbb{R}}
+\renewcommand{\S}{\mathcal{S}}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Y}{\mathcal{Y}}
+\renewcommand{\Z}{\mathcal{Z}}
+
+\newcommand{\affine}[1]{\normalfont{\mathbf{aff}}\of{#1}}
+\newcommand{\aff}[1]{\affine{#1}}
+\newcommand{\CH}[1]{\normalfont{\mathbf{conv}\of{#1}}}
+\newcommand{\INT}{\Pi_{\operatorname{int}}}
+
+\newcommand{\p}{\myvec{p}}
+\renewcommand{\q}{\myvec{q}}
+\renewcommand{\v}{\myvec{v}}
+\renewcommand{\b}{\myvec{b}}
+\newcommand{\m}{\myvec{m}}
+
+\newcommand{\aux}{\mathsf{aux}}
+\newcommand{\HYBRID}{\operatorname{HYBRID}}
+\newcommand{\IDEAL}{\operatorname{IDEAL}}
+\newcommand{\ID}{\operatorname{ID}}
+\newcommand{\Out}{\operatorname{Out}}
+\newcommand{\View}{\operatorname{View}}
+
+\newcommand{\CC}{\operatorname{CC}}
+
+\newcommand{\IKOPS}{\operatorname{IKOPS}}
+
+\renewcommand{\SD}{\operatorname*{SD}}
+
+\renewcommand{\det}[1]{\operatorname{det}\of{#1}}
+
+\title{On Perfectly Secure 2PC In The OT-Hybrid Model}
+\author{Anat Paskin-Cherniavsky and Bar Alon}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-We initiate the study of perfect (rather than merely statistical) reductions among cryptographic primitives. For simplicity, we focus on finite functionalities.
+In the setting of 2-party computation (2PC), the goal is to allow 2 mutually distrustful parties to compute some function of their private inputs in a way that preserves some security properties, even in the face of adversarial behavior by one of the parties. It is a known fact that in the plain model, 2PC is impossible even for simple functions \cite{CK89,Cleve86}.
 
-In addition to the obvious theoretical appeal of the question towards better understanding secure computation, perfect, as opposed to statistical reductions may be useful for designing MPC protocols with high concrete efficiency, achieved by eliminating the dependence on a security parameter.
+Nonetheless, in the seminal work~\cite{GHKL08}, and later followed by~\cite{Ash14,makriyannis2014classification,asharov2015complete}, it was discovered that in the OT-hybrid model, most of the 2-party functionalities can be evaluated with full security by efficient protocols. However, these general protocols have high round complexity.
+ 
+In a simpler model, called the client-server model, where only the client receive an output, \citet{IKOPS11} showed that with ideal access to a computation of OT, every 2PC functionality, can be computed using a \emph{single round}. Furthermore, the protocol's computational and communication complexity are efficient. So, while all 2PC functionalities can be evaluated with full security in the OT hybrid model (possibly inefficiently), there are provable gaps in their round complexity. 
 
-1-out-of-2 bit-OT (dubbed OT) was shown to be complete for statistically secure 2PC for all functionalities [Kil88, IPS08]. Existing protocols in the OT-hybrid model only offer statistically secure with abort (efficient) protocols (requiring no further computational assumptions). In general, fairness can not be guaranteed, and only security with abort is achievable [Cleve86]. If the protocol is not required to be efficient in the security parameter $k$, then all 2PC functionalities can be securely evaluated [GK10] with statistical security in the OT-hybrid model.
+We note the above results achieve only statistical security, namely, it is allowed to have some error in the security. Motivated by this gap, and by the relative ``ease'' of client-server functionalities for statistically secure 2PC in the OT-hybrid model, we study perfect reductions to OT for this class of functions.
 
-As opposed to the statistical setting, it is not known whether OT is complete for perfectly secure 2PC. Furthermore, only a few examples of functionalities that have such protocols are known: we are only aware of string-OT and TO (OT with reversed roles) as perfectly reducible to OT.
-On the negative side, a large class is known, as implied by the fairness literature. By definition, functionalities not securely computable with fairness require super-polynomial in $k$ 
-computational (and round) complexity to evaluate with error $neg(k)$ in the OT-hybrid model. 
-This implies that these functionalities not computable with fairness are also not computable with perfect security (in the OT-hybrid model). For symmetric boolean functionalities, this class been fully characterized [ABMO15].
+In addition to the obvious theoretical appeal of the question towards better understanding secure computation, perfect, as opposed to statistical reductions, may be useful for designing multiparty protocols with high concrete efficiency, achieved by eliminating the dependence on a security parameter.
 
-Back to the statistical world, quite surprisingly [IKOPS11] demonstrate that all client-server functionalities can be efficiently reduced to OT with statistical full security (no abort) in only one round.
+We prove that most client-server functions of the form $f:\X\times \Y\mapsto \{0,1\}$, where server domain size $|\X|$ is larger than client domain size $|\Y|$, have a perfect reduction to OT. In fact, a $\big(1-\operatorname{exp}\of{|\X|-|\Y|}\big)$-fraction of the functions are perfectly reducible to OT. 
+Furthermore, our reduction is 1-round using an oracle to secure evaluation of parallel invocations of $\bOT12$ (as in \cite{IKOPS11}). As an example, this class contains $\bOT25$. Extending the result to non-Boolean functions, for functions of the form $f: \X\times\Y\mapsto\Z$, a $\left(1-\operatorname{exp}\Big(|\X|-|\Y|\cdot(|\Z|-1)\Big)\right)$-fraction of the functions with $|\X|>|\Y|\cdot(|\Z|-1)$ are perfectly reducible to OT in 1 round. 
 
-Motivated by this relative ``ease'' of client-server functionalities for statistically secure 2PC in the OT-hybrid model, we study perfect reductions to OT for this class of functions.
-We prove that for many client-server functions of the form $f: X\times Y\rightarrow \{0,1\}$, where server domain size $|Y|$ is larger than client domain size $X$, have a perfect reduction to OT.
-More precisely, a $g(|X|,|Y|)=\Omega(1)$-fraction of functions are perfectly reducible to OT. This fraction grows roughly as $1-exp(|X|-|Y|)$.
-Furthermore, our reduction is 1-round using an oracle to secure evaluation of ${\text{OT}}^l$ (as in [IKOPS11]). As an example, this class contains $\text{2-out-of-5-OT}$.
-More generally, for $f: X\times Y\rightarrow Z$, $\Omega(1)$ of the functions with $|Y|>|X|(|Z|-1)$ are perfectly reducible to OT in 1 round. 
+Our work leaves open the question of whether all finite client-server functionalities are perfectly reducible to OT (not necessarily in one round). Another open question is whether 2PC functionalities that do have perfectly secure protocols in the OT hybrid model differ in round complexity, as is the case for statistical protocols.
 
-Our work leaves open the question of whether all finite client-server functionalities are perfectly reducible to OT (not necessarily in one round). 
-Another open question is whether 2PC functionalities that do have perfectly secure protocols in the OT hybrid model differ in round complexity, as is the case for statistical protocols.
+%We initiate the study of perfect (rather than merely statistical or computational) reductions among cryptographic primitives.% For simplicity, we focus on finite functionalities.
+
+%In addition to the obvious theoretical appeal of the question towards better understanding secure computation, perfect, as opposed to statistical reductions may be useful for designing Multiparty protocols with high concrete efficiency, achieved by eliminating the dependence on a security parameter.
+
+% $\bOT{1}{2}$ (dubbed OT) was shown to be complete for statistically secure 2PC for all functionalities \cite{Killian88,IPS08}. Existing protocols in the OT-hybrid model only offer statistically secure-with-abort, yet efficient, protocols. Furthermore, they requiring no further computational assumptions. In general, the notion of fairness can not be guaranteed, and only security with abort is achievable \cite{Cleve86}. If the protocol is not required to be efficient in the security parameter $\kappa$, then all 2PC functionalities can be securely evaluated \cite{GK10} with statistical security in the OT-hybrid model.
+
+% As opposed to the statistical setting, it is not known whether OT is complete for perfectly secure 2PC. Furthermore, only a few examples of functionalities that have such protocols are known: we are only aware of string-OT and TO (OT with reversed roles) as perfectly reducible to OT.
+% On the negative side, a large class is known, as implied by the fairness literature. By definition, functionalities not securely computable with fairness require super-polynomial in $\kappa$ 
+% computational (and round) complexity to evaluate with error $\negl(\kappa)$ in the OT-hybrid model. 
+% This implies that these functionalities not computable with fairness are also not computable with perfect security (in the OT-hybrid model). For symmetric boolean functionalities, this class been fully characterized \cite{asharov2015complete}.
+
+% Back to the statistical world, quite surprisingly \cite{IKOPS11} demonstrate that all client-server functionalities can be efficiently reduced to OT with statistical full security (no abort) in only one round.
+
+% Motivated by this relative ``ease'' of client-server functionalities for statistically secure 2PC in the OT-hybrid model, we study perfect reductions to OT for this class of functions.
+% We prove that for most client-server functions of the form $f: X\times Y\mapsto \{0,1\}$, where server domain size $|Y|$ is larger than client domain size $|X|$, have a perfect reduction to OT.
+% More precisely, a $g(|X|,|Y|)=\Omega(1)$-fraction of functions are perfectly reducible to OT. This fraction grows roughly as $1-exp(|X|-|Y|)$.
+% Furthermore, our reduction is 1-round using an oracle to secure evaluation of ${\OT}^{\ell}$ (as in \cite{IKOPS11}). As an example, this class contains $\bOT25$.
+% More generally, for $f: X\times Y\mapsto Z$, $\Omega(1)$ of the functions with $|Y|>|X|(|Z|-1)$ are perfectly reducible to OT in 1 round. 
+
+% Our work leaves open the question of whether all finite client-server functionalities are perfectly reducible to OT (not necessarily in one round). 
+% Another open question is whether 2PC functionalities that do have perfectly secure protocols in the OT hybrid model differ in round complexity, as is the case for statistical protocols.
 \end{abstract}
 
 \section{Introduction}
+In the setting of 2-party computation (2PC), the goal is to allow 2 mutually distrustful parties to compute some function of their private inputs in a way that preserves some security properties, even in the face of adversarial behavior by one of the parties. The two most common types of adversaries are \emph{malicious} adversaries (which may instruct the corrupted parties to deviate from the prescribed protocol in any possible way), and \emph{semi-honest} adversaries (which must follow the instructions of the protocol, but may try to infer additional information based on the view of the corrupted party).
 
-We revisit the question of what are the simplest idealized functionalities required for perfect fully secure (without abort) 2PC. 
-%Searching for the simplest possible setting, we focus on computationally unbounded parties.
-As $\OT{1}{2}$ is complete for several useful security notions, in this work we focus on $\OT{1}{2}$ as a candidate. While the setting of statistical security is quite well understood, as we will soon see, the question of perfect security of 2PC in the OT hybrid model is almost entirely open. 
+\citet{CK89} showed that in the plain model, even for simple functions such as AND and OR, fully secure computation is impossible against semi-honest adversaries, even when the parties are unbounded. Furthermore, \citet{Cleve86} showed that the functionality of Coin-Tossing, where the parties output the same random bit, is impossible to compute with full-security in the plain model, even though it can be easily computed with security against semi-honest adversaries.% adversaries for some simple functions such as AND and OR~\cite{CK89}.
+%Here even a simulation error of, say, $1/3$ is not achievable. Among the functionalities that are efficiently semi-honestly computable even with perfect security, some are not computable with statistical security against malicious parties in the plain model.
 
-Briefly, in the OT-hybrid model, on addition to sending messages among themselves, the parties are allowed to make (any number of) calls to an idealized secure implementation of $\OT{1}{2}$. 
-More precisely, we assume that in every round, one party either sends a message over the channel connecting the parties, or makes a call to an ideal OT functionality ${\OT{1}{2}}^l$ where $l\geq 1$
-is some number. The same party plays the sender of the OT call.
-
-That is, here we assume a somewhat stronger oracle that securely evaluates ${\OT{1}{2}}^l$, where $l$ may vary between rounds (in particular, the receiver submits all inputs and receives all outputs simultaneously - he may not choose some of the inputs based on outputs of other OT calls).
-
-Let us briefly review some key results on statistically and computationally secure protocols in the OT-hybrid model. %In this discussion we consider the more standard setting where protocols should be efficient, unless stated otherwise.
-In this work, and when discussing efficient protocols from the literature, we focus on finite functionalities, so the complexity is measured in terms of a security parameter $1^k$ (where the simulation error is $\epsilon = neg(k)$).
+Nonetheless, in the seminal work~\cite{GHKL08}, and later followed by~\cite{Ash14,makriyannis2014classification,asharov2015complete}, it was discovered that under the assumption that protocols for computing Oblivious Transfer (OT) exists, most of the 2-party functionalities can be evaluated with full security by efficient protocols. In particular,~\cite{asharov2015complete} completes the characterization of symmetric boolean functions (where both parties receive the same output). In other words, assuming that the parties have access to an \emph{ideal computation} of OT, a model known as the OT-hybrid, most of the 2-party functionalities can be evaluated with full security. However, all known general protocols for such functions have round complexity that is super-logarithmic in the security parameter.
  
-\paragraph{Statistically secure 2PC in the OT-hybrid model.} Even inefficiently, statistically secure computation is known to be impossible in the plain model even against semi-honest adversaries for some simple functions such as AND and OR~\cite{CK89}.
-Here even a simulation error of, say, $1/3$ is not achievable.
-Among the functionalities that are efficiently semi-honestly computable even with perfect security, some are not computable with statistical security against malicious parties in the plain model.
+\citet{IKOPS11} showed that in the OT-hybrid model, every 2PC functionality in the client-server model, where only the client learns an output, can be computed using a single round. Furthermore, the protocol's computational and communication complexity are efficient. So, while all 2PC functionalities can be evaluated with full security in the OT hybrid model (possibly inefficiently), there are provable gaps in their round complexity. 
 
-In particular, Cleve~\cite{Cleve86} has demonstrated that even the simple functionality of coin tossing where both parties output the same random bit, is not efficiently computable with statistical security. This impossibility extends to the OT-hybrid model.
+We note the above results achieve only statistical security, namely, it is allowed to have some error in the security. Motivated by this, we study \emph{perfect security}, \ie we do not allow any error in the security. In addition to the obvious theoretical appeal of the question towards better understanding secure computation, perfect, as opposed to statistical reductions, may be useful for designing multiparty protocols with high concrete efficiency, achieved by eliminating the dependence on a security parameter.
 
-As a consequence, the 2PC literature (more generally, MPC without honest majority) has settled on a weaker notion of security with abort where the ideal world adversary $A$ has the extra power allowing it to learn the output $f_A(x,y)$ first, and then decide whether to instruct the TP to send the honest party $B$ its output $f_B(x,y)$ or to send it $\bot$ (abort). General purpose 2PC protocols that are statistically secure with abort for any 2PC functionality have been developed starting with ~\cite{GMW91} in the computational setting, followed by~\cite{Killian88}, that only assumes an OT oracle (while~\cite{GMW91} relies on additional cryptographic primitives,\cite{Killian88} demonstrates how to implement these and many other cryptographic primitives using OT). 
+Several results on perfect security are already known. Given access to an (many parallel) ideal computation for $\bOT12$, \cite{BCS96} showed how to compute 1-out-of-2 string-OT, and \cite{WolfW06} showed how to compute the functionality $\TO{1}{2}$, which is the same as $\bOT{1}{2}$ where the roles of the parties are reversed. Furthermore the protocols have a single round \bnote{Verify.}, and the former require no additional bits to be sent over the channel between the parties, while the latter require an additional bit to be sent. 
 
-A more recent alternative relaxation of statistical security~\cite{GK10}
-allows for a polynomial error $poly(k^{-1})$, while requiring the parties are still efficient. In~\cite{GK10}, it is proved that all 2PC functionalities are computable with statistical security in the OT hybrid model according to this notion. They refer to this notion as $1/p$-security.
-
-Furthermore, their results can be interpreted as statistically secure protocols in the OT hybrid model in our setting (when efficiency is not required).% These generalize previous constructions for coin tossing, that also satisfy this security notion.
-
-Also, quite surprisingly, it turns out that many functionalities can be evaluated with statistical security by efficient protocols as discovered in the seminal work~\cite{GHKL08}, followed by works as~\cite{Ash14,ABMO15}. In particular,~\cite{ABMO15} completes the characterization of symmetric boolean functions
-(where both parties receive the same output)
- 
-However, all known protocols for such functions require round complexity of $\omega_k(1)$. In~\cite{IKOPS11}, a 1-round protocol is presented for client-server functionalities, where only the client learns an output. The protocol has a single round, and makes a single call to an  ${\OT{1}{2}}^l$ oracle (does not use the channel connecting the parties).
-Furthermore, the protocol's computational and communication complexity are efficient in $k$. So, while all 2PC functionalities can be evaluated with statistical security in the OT hybrid model (possibly inefficiently), there are provable gaps in their round complexity. 
-
-For instance, Cleve's impossibility result, and~\cite{GHKL08}'s result for functions with a so called \emph{embedded xor}, in fact prove that certain functionalities including coin-tossing require round complexity of $\omega_k(1)$. This puts, coin tossing much higher in the round complexity hierarchy than all client-server functionalities which have protocols with round complexity of 1.
-
-\paragraph{Perfectly secure 2PC in the OT-hybrid model.}
-While the statistical setting is qualitatively understood (for unbounded parties), and even the round complexity of protocols is partially understood, much less is known in the perfect setting. 
-The ultimate goal of this work is to understand which functionalities can be evaluated with perfect security in the OT hybrid model.
-
-On the positive side, we are aware of only a handful of perfect reductions to $\OT{1}{2}$. One is from string-OT~\cite{BCS96}, and one from $\TO{1}{2}$~\cite{WolfW06}, which is the same as $\OT{1}{2}$ where the roles of the parties are reversed. The first one sends no bits over the point to point channel, and only uses to ${\OT{1}{2}}^l$ oracle, while the latter only requires only a single bit of additional communication over the channel.
-On the negative side, 2PC functionalities requiring $\omega_k(1)$ rounds mentioned above are not perfectly computable. 
+% On the positive side, we are aware of only a handful of perfect reductions to $\bOT{1}{2}$. One is from string-OT~\cite{BCS96}, and one from $\TO{1}{2}$~\cite{WolfW06}, which is the same as $\bOT{1}{2}$ where the roles of the parties are reversed. The first one sends no bits over the point to point channel, and only uses to ${\bOT{1}{2}}^l$ oracle, while the latter only requires only a single bit of additional communication over the channel.
+% On the negative side, 2PC functionalities requiring $\omega_k(1)$ rounds mentioned above are not perfectly computable. 
 
 Thus, the state of affairs is that most 2PC functionalities that are computable with fairness remain unclassified as to perfect security. 
 
-\subsection{Our results}
-
-Motivated by the relative ease of client-server functionalities for statistical security in the OT-hybrid model, we start with client-server functionalities.\\
-
-\emph{Question 1. Characterize the set of 2PC functionalities (not necessarily boolean) which are perfectly secure in the OT-hybrid model.
-As a starting point, can we characterize client-server functionalities ?}
- 
-We make progress on the above question, and discover a broad class of 2PC functionalities computable with perfect security.
+\subsection{Our Results}\label{sec:results}
+For a given function $f : \set{x_1, \ldots, x_n} \times \set{y_1, \ldots , y_m} \mapsto \zo$, we consider its geometric representation as $n$ points over $\R^m$, where the $j$-th coordinate of the $i$-th
+point is simply $f(x_i, y_j)$. We then consider the \emph{convex polytope} defined by these points, and we show that if the dimension of the polytope is $m$, then $f$ can be perfectly computed in the OT-hybrid model. We prove the following theorem:
 
 \begin{theorem}[Informal]
-	Let $f:X\times Y\rightarrow Z$ be a deterministic finite client-server functionality. If the truth table of $f$ is full dimensional (as defined in~\cite{Ash14}), then $f$ is computable with perfect security in the OT-hybrid model.
+	Let $f:\X \times \Y \mapsto \zo$ be a deterministic \bnote{Does it has to be deterministic?} client-server functionality. If the dimension of the convex polytope defined by $f$ is $|\Y|$, then $f$ can be computed with perfect full-security in the OT-hybrid model in a single round.
 \end{theorem}
 
 We do not know whether all client-server functionalities are computable with perfect security, and leave it as an interesting open question.
+
+\subsection{Our Techniques}
+We first give a brief overview of the protocol of \cite{IKOPS11}, which will be dubbed the IKOPS protocol. We will later explain how turn it into a protocol that has perfect security.
+
+\paragraph{The IKOPS Protocol.}
+
+\paragraph{Achieving Perfect Security.}\TODO{Add explanations}
 
 In a nutshell, we start with a variant of~\cite{IKOPS11}'s protocol, which is statistically secure with abort. We rely on a special structure of the protocol, where the probability of $\bot$ is independent of the input, up to negligible differences.\footnote{In~\cite{IKOPS11},
 they also put forward a protocol which is fully statistically secure, essentially by setting the server's input to some default value instead of outputting $\bot$. For the purpose of making the protocol perfectly secure, we make a different choice for $\bot$.}
 
 To make the protocol perfectly secure against malicious clients, we modify the so called ``watchlists'' used in~\cite{IKOPS11}  to include exactly $k$ out of $n$ virtual servers, rather than enlist each server with a certain probability. Then, to make it perfectly secure against malicious servers, we rely on geometric interpretation of security (as previously used in the fairness literature), and come up with a way to replace $\bot$ in the ideal model simulating a corrupted server for functions of \emph{full dimension}.
+%For instance, Cleve's impossibility result, and~\cite{GHKL08}'s result for functions with a so called \emph{embedded xor}, in fact prove that certain functionalities including coin-tossing require round complexity of $\omega_k(1)$. This puts, coin tossing much higher in the round complexity hierarchy than all client-server functionalities which have protocols with round complexity of 1.
+
+% We revisit the question of what are the simplest idealized functionalities required for perfect fully secure 2-party computation (2PC).
+% %Searching for the simplest possible setting, we focus on computationally unbounded parties.
+% As $\bOT{1}{2}$ is complete for several useful security notions, in this work we focus on $\bOT{1}{2}$ as a candidate. While the setting of statistical security is quite well understood, the question of perfect security is almost entirely open. 
+
+% Briefly, in the OT-hybrid model, in addition to sending messages among themselves, the parties are allowed to make any number of calls to an idealized secure implementation of $\bOT{1}{2}$. 
+% More precisely, we assume that in every round, one party either sends a message over the channel connecting the parties, or makes a call to $\ell$ ideal executions of the OT \emph{in parallel}, namely, the receiver submits all inputs and receives all outputs simultaneously - he may not choose some of the inputs based on outputs of other OT calls. Here we assume that it is always the case where the same party plays the sender in the call for the OT. Here we assume that the parties are given a stronger oracle. %that securely evaluates ${\bOT{1}{2}}^{\ell}$, where $\ell$ may vary between rounds (in particular, the receiver submits all inputs and receives all outputs simultaneously - he may not choose some of the inputs based on outputs of other OT calls).
+
+% %Let us briefly review some key results on statistically and computationally secure protocols in the OT-hybrid model. %In this discussion we consider the more standard setting where protocols should be efficient, unless stated otherwise.
+% %In this work, and when discussing efficient protocols from the literature, we focus on finite functionalities, so the complexity is measured in terms of a security parameter $1^{\kappa}$ (where the simulation error is negligible in $\kappa$).
+ 
+% \paragraph{Statistically Secure 2PC in the OT-Hybrid Model.} Even inefficiently, statistically secure computation is known to be impossible in the plain model even against semi-honest adversaries for some simple functions such as AND and OR~\cite{CK89}.
+% Here even a simulation error of, say, $1/3$ is not achievable.
+% Among the functionalities that are efficiently semi-honestly computable even with perfect security, some are not computable with statistical security against malicious parties in the plain model.
+
+% In particular, Cleve~\cite{Cleve86} has demonstrated that even the simple functionality of coin tossing where both parties output the same random bit, is not efficiently computable with statistical security. This impossibility extends to the OT-hybrid model.
+
+% As a consequence, the 2PC literature (more generally, MPC without honest majority) has settled on a weaker notion of security with abort where the ideal world adversary $A$ has the extra power allowing it to learn the output $f_A(x,y)$ first, and then decide whether to instruct the TP to send the honest party $B$ its output $f_B(x,y)$ or to send it $\bot$ (abort). General purpose 2PC protocols that are statistically secure with abort for any 2PC functionality have been developed starting with ~\cite{GMW91} in the computational setting, followed by~\cite{Killian88}, that only assumes an OT oracle (while~\cite{GMW91} relies on additional cryptographic primitives,\cite{Killian88} demonstrates how to implement these and many other cryptographic primitives using OT). 
+
+% A more recent alternative relaxation of statistical security~\cite{GK10}
+% allows for a polynomial error $poly(k^{-1})$, while requiring the parties are still efficient. In~\cite{GK10}, it is proved that all 2PC functionalities are computable with statistical security in the OT hybrid model according to this notion. They refer to this notion as $1/p$-security.
+
+% Furthermore, their results can be interpreted as statistically secure protocols in the OT hybrid model in our setting (when efficiency is not required).% These generalize previous constructions for coin tossing, that also satisfy this security notion.
+
+% Also, quite surprisingly, it turns out that many functionalities can be evaluated with statistical security by efficient protocols as discovered in the seminal work~\cite{GHKL08}, followed by works as~\cite{Ash14,asharov2015complete}. In particular,~\cite{asharov2015complete} completes the characterization of symmetric boolean functions
+% (where both parties receive the same output)
+ 
+% However, all known protocols for such functions require round complexity of $\omega_k(1)$. In~\cite{IKOPS11}, a 1-round protocol is presented for client-server functionalities, where only the client learns an output. The protocol has a single round, and makes a single call to an  ${\bOT{1}{2}}^l$ oracle (does not use the channel connecting the parties).
+% Furthermore, the protocol's computational and communication complexity are efficient in $k$. So, while all 2PC functionalities can be evaluated with statistical security in the OT hybrid model (possibly inefficiently), there are provable gaps in their round complexity. 
+
+% For instance, Cleve's impossibility result, and~\cite{GHKL08}'s result for functions with a so called \emph{embedded xor}, in fact prove that certain functionalities including coin-tossing require round complexity of $\omega_k(1)$. This puts, coin tossing much higher in the round complexity hierarchy than all client-server functionalities which have protocols with round complexity of 1.
+
+% \paragraph{Perfectly secure 2PC in the OT-hybrid model.}
+% While the statistical setting is qualitatively understood (for unbounded parties), and even the round complexity of protocols is partially understood, much less is known in the perfect setting. 
+% The ultimate goal of this work is to understand which functionalities can be evaluated with perfect security in the OT hybrid model.
+
+% On the positive side, we are aware of only a handful of perfect reductions to $\bOT{1}{2}$. One is from string-OT~\cite{BCS96}, and one from $\TO{1}{2}$~\cite{WolfW06}, which is the same as $\bOT{1}{2}$ where the roles of the parties are reversed. The first one sends no bits over the point to point channel, and only uses to ${\bOT{1}{2}}^l$ oracle, while the latter only requires only a single bit of additional communication over the channel.
+% On the negative side, 2PC functionalities requiring $\omega_k(1)$ rounds mentioned above are not perfectly computable. 
+
+% Thus, the state of affairs is that most 2PC functionalities that are computable with fairness remain unclassified as to perfect security. 
+
+% \subsection{Our results}
+
+% Motivated by the relative ease of client-server functionalities for statistical security in the OT-hybrid model, we start with client-server functionalities.\\
+
+% \emph{Question 1. Characterize the set of 2PC functionalities (not necessarily boolean) which are perfectly secure in the OT-hybrid model.
+% As a starting point, can we characterize client-server functionalities ?}
+ 
+% We make progress on the above question, and discover a broad class of 2PC functionalities computable with perfect security.
+
+% \begin{theorem}[Informal]
+% 	Let $f:X\times Y\rightarrow Z$ be a deterministic finite client-server functionality. If the truth table of $f$ is full dimensional (as defined in~\cite{Ash14}), then $f$ is computable with perfect security in the OT-hybrid model.
+% \end{theorem}
+
+% We do not know whether all client-server functionalities are computable with perfect security, and leave it as an interesting open question.
+
+% In a nutshell, we start with a variant of~\cite{IKOPS11}'s protocol, which is statistically secure with abort. We rely on a special structure of the protocol, where the probability of $\bot$ is independent of the input, up to negligible differences.\footnote{In~\cite{IKOPS11},
+% they also put forward a protocol which is fully statistically secure, essentially by setting the server's input to some default value instead of outputting $\bot$. For the purpose of making the protocol perfectly secure, we make a different choice for $\bot$.}
+
+% To make the protocol perfectly secure against malicious clients, we modify the so called ``watchlists'' used in~\cite{IKOPS11}  to include exactly $k$ out of $n$ virtual servers, rather than enlist each server with a certain probability. Then, to make it perfectly secure against malicious servers, we rely on geometric interpretation of security (as previously used in the fairness literature), and come up with a way to replace $\bot$ in the ideal model simulating a corrupted server for functions of \emph{full dimension}.
 
 \subsection{Future work - more on the relation to fairness}
-
+\TODO{Read}
 Trivially, if a 2PC functionality has a perfectly secure protocols in the OT hybrid model it is also securely computable with fairness.
 The other direction is not true. As follows from the $\omega_k(1)$ bound in~\cite{GHKL08} for symmetric functions with an embedded XOR, and the  construction of~\cite{Ash14} for all full dimensional functions (some of which have an embedded XOR), fairness does not imply perfect security. 
 
@@ -176,251 +305,420 @@ One approach towards constructing such protocols (for general 2PC functionalitie
 
 Here full dimension properties of $f$ alone will not generally suffice, as for (symmetric) functionalities with an embedded xor every protocol with error $neg(k)$ requires $\omega_k(1)$ rounds~\cite{GHKL08} so perfect security is in fact impossible.
 
-\paragraph{Rodamap.} Section 2 includes some facts from geometry
-and algebra that will be useful for us, and some useful facts on $\OT{1}{2}$. In this section we also present the concrete setting in which we work, which is essentially, the OT hybrid model with perfect security. The standard security definition is partially restated in geometric terms, which is crucial for the analysis of our main construction.
+\subsection{Organization}\TODO{Fix} Section 2 includes some facts from geometry
+and algebra that will be useful for us, and some useful facts on $\bOT{1}{2}$. In this section we also present the concrete setting in which we work, which is essentially, the OT hybrid model with perfect security. The standard security definition is partially restated in geometric terms, which is crucial for the analysis of our main construction.
 In section 3 we restate a folklore result as a simple instance of a perfect protocol in our model, which in fact, does not require an OT oracle at all. In section 4 we state our main perfect protocol working for so called \emph{full-dimensional} client-server functions.
 In Section 5 we briefly go over possible applications of our result for concretely efficient 2PC constructions.
 
 \paragraph{Acknowledgement.}
 
-The author is very grateful to Yuval Ishai for suggesting this question, and for many helpful discussions. 
+We are very grateful to Yuval Ishai for suggesting this question, and for many helpful discussions. 
 
 \section{Preliminaries}
+\subsection{Notations}
+We use calligraphic letters to denote sets, uppercase for random variables and matrices, lowercase for values, and we use bold characters to denote vectors. All logarithms are in base 2. For $n\in\N$, let $[n]=\{1,2\ldots n\}$. For a set $\S$ we write $s\from\S$ to indicate that $s$ is selected uniformly at random from $\S$. Given a random variable (or a distribution) $X$, we write $x\from X$ to indicate that $x$ is selected according to $X$. %A PPT stands for probabilistic polynomial time. 
+The support of a distribution $D$ over a finite set $\S$, denoted $\Supp(D)$, is defined as $\left\{s\in\S\cond D(s)>0\right\}$. A function $\mu(\cdot)$ is called negligible, if for every polynomial $p(\cdot)$ and all sufficiently large $n$, it holds that $\mu(n)<1/p(n)$. We write $\negl\of{\cdot}$ to denote an unspecified negligible function. For a randomized function (or an algorithm) $f$ we write $f(x)$ to denote the random variable induced by the function, and write $f(x;r)$ to denote the value when the randomness of $f$ is fixed to $r$.
 
-\paragraph{Convex Geometry.} We will need the following geometric notion (eventually, the represent truth tables of 2PC functions).
-\begin{definition}[Affine dimension~\cite{Ash14}]
-	For a set of vectors $V=\{v_1,\ldots,v_t\}\subseteq\R^n$, we define their affine dimension $\affine{V}$ as the dimension of the set
-	$\{v_i-v_1\}_{i\geq 2}$. 
+%A \emph{distribution ensemble} $X=\set{X_{a,n}}_{a\in\D_n,n\in\N}$ is an infinite sequence of random variables indexed by $a\in\D_n$ and $n\in\N$, where $\D_n$ is a domain that might depend on $n$. The statistical distance between two finite distributions is defined as follows.
+\begin{definition}\label{def:statDist}
+	The statistical distance between two finite random variables $X$ and $Y$ is
+	$$\SD\of{X,Y}=\frac12\sum_{a}\abs{\pr{X=a}-\pr{Y=a}}.$$
+	%Two ensembles $X=\set{X_{a,n}}_{a\in\D_n,n\in\N}$ and $Y=\set{Y_{a,n}}_{a\in\D_n,n\in\N}$ are said to be statistically close, denoted $X\sta Y$, if there exists a negligible function $\mu(\cdot)$, such that for all $n$ and $a\in\D_n$, it holds that
+	%$$\SD\of{X_{a,n},Y_{a,n}}\leq\mu(n).$$
 \end{definition}
-For a vector $v\in \R^m$, 
-we let $|v|_1=\sum_i|v_i|$ denote its $\ell_1$ norm, and $|v|_\infty=max_i |v_i|$ denote its $\ell_\infty$ norm.
-For a set of vectors $V=\{v_1,\ldots,v_t\}\subseteq\R^n$, a linear combination $\sum_i \alpha_iv_i$ where $\sum_i\alpha_i=1$ and $\forall i\alpha_i\geq 0$ is a convex combination of $V$. The convex hall of $V$,
-$\CH{V}=\{u=\sigma_i\alpha_iv_i|u\text{ is a convex combination of }V\}$.
+%For a random variable $X$ and a natural number $n$ we let $X^n=\vect{X^{(1)},X^{(2)},\ldots,X^{(n)}}$, where the $X^{(i)}$'s are i.i.d. copies of $X$.  
 
-\paragraph{Algebra.}
+\subsection{Decomposable Randomized Encoding}
+We recall the definition of randomized encoding \cite{Yao86,AIK04}.
 
-For a matrix $A\in \F^{n\times n}$, where $\F$ is a field, let
-$|A|$ denote the determinant of $A$. $A^{i,j}$ denotes the $(i,j)$'th co factor of $A$, which is the $(n-1)\times(n-1)$ matrix obtained by removing the $i$'th row and $j$'th column of $A$.
+\begin{definition}[Randomized Encoding]
+Let $f:\zo^n\mapsto\Z$ be some function. We say that a function $\hat{f}:\zo^n\times\mathcal{R}\mapsto\mathcal{W}$ is a perfect randomized encoding (PRE) of $f$ if the following holds.
+
+\begin{description}
+	\item[Correctness:] There exists a decoding algorithm $\mathsf{Dec}$ such that for every $x\in\zo^n$
+    $$\Pr_{r\from\mathcal{R}}\left[\mathsf{Dec}\of{\hat{f}\of{x;r}}=f(x)\right]=1.$$
+    
+    \item[Privacy:] There exists a randomized algorithm $\Sim$ for every $x\in\zo^n$ it holds that
+    $$\Sim\of{f(x)}\equiv\hat{f}\of{x;r},$$
+    where $r\from\mathcal{R}$.
+\end{description}
+\end{definition}
+
+\begin{definition}[Decomposable Randomized Encoding]
+A randomized encoding $\hat{f}$ is said to be \emph{decomposable} if it can be written as $\hat{f}\of{x;r}=\vect{\hat{f}_0\of{r},\hat{f}_1\of{x_1;r},\ldots,\hat{f}_n\of{x_n;r}}$, where each $\hat{f}_i$ can be written as one of two vectors that depends on $x_i$, \ie we can write it as $\v_{i,x_i}$, where $(\v_{i,0},\v_{i,1})$ depends of the randomness $r$.
+\end{definition}
+
+\subsection{Mathematical Background}
+For a vector $\v\in\R^n$, we denote its $i$-th component with either $v_i$ or $\v\of{i}$, we let $|\v|_1=\sum_{i}v_i$ be its $\ell_1$ norm, and we let $|\v|_\infty=\max_i |v_i|$ denote its $\ell_\infty$ norm.
+
+A vector $\p\in\R^n$ is called a probability vector if $\p_i\geq 0$ for every $1 \leq i\leq n$ and $\sum_{i=1}^n p_i=1$. 
+
+\begin{definition}[Convex Combination and Convex Hull]
+Let $\V=\{\v_1,\ldots,\v_m\}\subseteq\R^n$ be a set of vectors. A convex combination is a linear combination $\sum_{i=1}^m \alpha_i\cdot\v_i$ where $\sum_{i=1}^m\alpha_i=1$ and $\alpha_i\geq 0$ for all $1\leq i\leq m$. The convex hall of $\V$, denoted
+$$\CH{\V}=\set{\sum_{i=1}^m\alpha_i\cdot\v_i\cond \sum_{i=1}^m\alpha_i=1\text{ and } \alpha_i\geq 0 \text{ for all } 1\leq i\leq m},$$ 
+is the set of all vectors that can be represented as a convex combination of the vectors in $\V$.
+\end{definition}
+
+\begin{definition}[Affine Hull]
+	For a set of vectors $\V=\{\v_1,\ldots,\v_m\}\subseteq\R^n$, we define their \emph{affine hull} to be the set
+    $$\aff{\V}=\set{\sum_{i=1}^m\alpha_i\cdot\v_i\cond \sum_{i=1}^m\alpha_i=1}.$$
+    %dimension $\affine{\V}$ as the dimension of the vector space spanned by the set $\set{\v_i-\v_1:i\geq 2}$. 
+\end{definition}
+
+For a matrix $A\in \R^{n\times n}$, we let $A\of{i,\cdot}$ be its $i$-th row and $A\of{\cdot,j}$ be its $j$-th column. We denote by $\det{A}$ the determinant of $A$, and denote by $A^T$ the transpose of $A$. Finally, we denote by $A^{i,j}$ the $(i,j)$'th minor of $A$, which is the $(n-1)\times(n-1)$ matrix obtained by removing the $j$'th row and $i$'th column of $A$.
 It is well known that:
 \begin{fact}\label{fact-cramer}
-	$A^{-1}=C$ where $|C_{i,j}|=|A_{i,j}|/|A|$
-	(Cramer's formula).
+Let $A\in\R^{n\times n}$ be an invertible matrix. Then $\abs{A^{-1}_{i,j}}=\det{A^{j,i}}/\det{A}$ for all $i$ and $j$.
 \end{fact}
-For a pair of matrices $M_1\in \F^{n_1\times m},M_2\in \F^{n_2\times m}$, we denote by $[M_1||M_2]$ the concatenation of $M_2$ below $M_1$.
+For a pair of matrices $M_1\in \R^{n\times m_1},M_2\in \R^{n\times m_2}$, we denote by $\left[M_1||M_2\right]$ the concatenation of $M_2$ to the right of $M_1$.
 
-\paragraph{Oblivious Transfer (OT).}
+\section{Secure 2-Party Computation In The Client-Server Model}
+We follow the standard \emph{ideal~vs.~real} paradigm for defining security. Intuitively, the security notion is defined by describing an ideal functionality, in which both the corrupted and non-corrupted parties interact with a trusted entity. A real-world protocol is deemed secure if an adversary in the real-world cannot cause more harm than an adversary in the ideal-world. This is captured by showing that an ideal-world adversary (simulator) can simulate the full view of the real world adversary. In our setting, we consider a single round, in the client-server model, in the OT-hybrid model instead of the standard real-world. In this setting, the server and client send input to the OT functionality, and the client then receive an output from the OT, allowing it to compute its output.
+
+To make the above intuition more formal, fix a function $f:\X\times\Y\mapsto\Z$. %Throughout the paper, we let $\X=\set{x_1,\ldots,x_n}$ and $\Y=\set{y_1,\ldots,y_k$.
+We next describe the execution in the OT-hybrid model.
+
+\subsection*{The 1-Round OT-Hybrid World}
+The $\bOT12$ functionality, is a 2-party client-server functionality in which the server inputs a pair of bit-messages $m_0$ and $m_1$, and the client inputs a single bit $b$. The server receives $\bot$ and the client receives $m_b$. For every natural number $\ell\geq1$, we define the functionality $\bOT12^{\ell}$ as follows. Let $\myvec{m}=\vect{m_0^i,m_1^i}_{i=1}^{\ell}$ and let $\myvec{b}=\vect{b_i}_{i=1}^{\ell}$, where $m_0^i,m_1^i,b_i\in\zo$ for every $i$. We denote by $\myvec{m}[\myvec{b}]=\vect{m^i_{b_i}}_{i=1}^{\ell}$. The functionality is then defined as $\vect{\myvec{m},\myvec{b}}\mapsto\vect{\bot,\myvec{m}[\myvec{b}]}$. That is, it is the equivalent of computing $\ell$ times in parallel the $\bOT12$ functionality. Finally, we let $\OT=\set{\bOT12^{\ell}}_{\ell\geq1}$.
+
+A generalization $\bOT{1}{t}$ of $\bOT{1}{2}$ lets the client pick one out of $t$ bits $m_1,m_2,\ldots,m_t$ supplied by the server.
+This can be further generalized to $\sOT{1}{t}{h}$ where the $t$ bits are replaced by strings $s_1,\ldots,s_t\in \{0,1\}^h$, of which on input $i$ the client learns $s_i$.
+
+A 1-round protocol $\Pi$ for computing $f$ with security parameter $\kappa$ is a triple of randomized algorithms $\vect{\Pi_S,\Pi_C,\Pi_O}$, and the computation is done as follows.
+\begin{description}
+\item[Inputs:] The server holds input $x\in\X$ and the client holds input $y\in\Y$. In addition, both parties holds $1^{\kappa}$.
+
+\item[Parties send inputs to the OT:] The server samples bit-messages $\myvec{m}\from\Pi_S\of{x,1^{\kappa}}$, and the client samples bits $\myvec{b}\from\Pi_C\of{y,1^{\kappa}}$. Here we have that $\myvec{m}\in\zo^{2\ell\of{\kappa}}$ and $\myvec{b}\in\zo^{\ell\of{\kappa}}$ for some $\ell$ determined by the protocol. The client then receive $\myvec{m}[\myvec{b}]$ from the OT.
+
+\item[Outputs:] The server outputs nothing, and the client apply $\Pi_O$ on its view to obtain an output $z$.
+\end{description}
+
+We refer to the $\ell\of{\kappa}$ used in the protocol as the communication complexity ($\CC$) of $\Pi$.
+
+In the setting of 2-party computation, we consider a single adversary $\adv$ that controls a single party. The adversary has access to the full view of the party. We assume the adversary is malicious, that is, it may instruct the corrupted party to deviate from the protocol in any way it chooses. The adversary is non-uniform, and is given an auxiliary input $\aux$. %The adversary is static, that is, it chooses the subset it corrupts prior to the execution of the protocol.
+For simplicity we do not concern ourselves with the efficiency of the protocols or the adversaries, namely, we assume that the parties and the adversary are unbounded.
+
+We let $\Out^{\HYBRID}_{\adv\of{x,\aux},\Pi}\of{x,y,1^{\kappa}}$ denote the output of the client in a random execution of $\Pi$, when $\adv$ corrupts the server. We further let $\View^{\HYBRID}_{\adv\of{y,\aux},\Pi}\of{x,y,1^{\kappa}}$ denote the adversary's view in a random execution of $\Pi$, when $\adv$ corrupts the client.
 
 
-The $\OT{1}{2}$ functionality is a client-server functionality, where the server inputs a pair $(b_1,b_2)$ of bits, the client inputs an index $i\in\{0,1\}$. The client outputs $b_i$, while the server outputs $\bot$.
-A generalization $\OT{1}{t}$ of $\OT{1}{2}$ lets the client pick one out of $t$ bits $b_1,b_2,\ldots,b_t$ supplied by the server.
-In a further generalization $\sOT{1}{t}{h}$ the $t$ bits are replaced by strings $s_1,\ldots,s_t\in \{0,1\}^h$, of which on input $i$ the client learns $s_i$.
+\subsection*{The ideal Model}
+We now describe the interaction in the ideal model, which specifies the requirements for fully secure computation of the function $f$ with security parameter $\kappa$. Let $\adv$ be an adversary in the ideal-world, which is given an auxiliary input $\aux$ and corrupts one of the parties.
 
+\paragraph{The ideal model -- full-security.}
+\begin{description}
 
-A perfect reduction from $\sOT{1}{t}{h}$ to $\OT{1}{2}$ was put forward in the elegant work of~\cite{BCS96}, which constitutes one of the few examples of perfect reductions to $\OT{1}{2}$ known so far.
+\item[Inputs:] The server holds input $x\in\X$ and the client holds input $y\in\Y$. The adversary is given an auxiliary input $\aux\in\zo^{*}$ and the input of the corrupted party. The trusted party $\trustp$ holds $1^{\kappa}$.
 
-\begin{theorem}\label{thm-int}[\cite{BCS96}]
-	There exists a perfectly secure protocol as in Definition~\ref{def-prot} of $\sOT{1}{2}{h}$ with communication complexity $l\leq (t-1)5h$. We refer to it as the $\INT$ protocol. 	
+\item[Parties send inputs:] The honest party sends its input to $\trustp$. The adversary sends a value $w$ from its domain as the input for corrupted party.
+% This decision may depend on $x_i\in\C$ and $\adv$'s auxiliary input $z$. Write $\vect{x'_1,\ldots,x'_m}$ for the tuple of inputs received by $\trustp$.\\
+
+\item[The trusted party performs computation:] 
+%If any $x'_i$ is not in the appropriate domain (or was not sent at all), then $\trustp$ reassigns the aberrant input to some default value.
+The trusted party $\trustp$ selects a random string $r$ and computes $z=f\of{x,w;r}$ if the client is corrupted and  computes $z=f(w,y;r)$ if the server is corrupted. $\trustp$ then sends $z$ to the client.
+
+\item[Outputs:] An honest server outputs nothing, and an honest client output $z$. The adversary outputs some function of its view.
+\end{description}
+
+We let $\Out^{\IDEAL}_{\adv\of{x,\aux},f}\of{x,y,1^{\kappa}}$ denote the output of the client in a random execution of of the above ideal-world process, with an $\adv$ corrupting the server. We further let $\View^{\IDEAL}_{\adv\of{y,\aux},f}\of{x,y,1^{\kappa}}$ be the view description being the \emph{output} of $\adv$ in such a process, when $\adv$ corrupts the client.
+
+We next present the definition for security against malicious adversaries. The definition we present is tailored to the setting of 2-party client-server model.
+\begin{definition}[malicious security]\label{def:perfectsec}
+	Let $\Pi$ be a protocol for computing $f$ in the 1-round OT-hybrid world. Let $\eps$ be a function of the security parameter.
+    \begin{enumerate}
+    \item\label{item:corr}\normalfont{\textbf{Correctness:}} We say that $\Pi$ is \emph{correct} if whenever both the server and the client are honest, then the client outputs $f(x,y)$ with probability 1, for all $\kappa\in\N$, $x\in\X$, and $y\in\Y$.
+    
+    \item\label{item:malser}\normalfont{\textbf{Server Security:}} We say that $\Pi$ is \emph{$\eps$-server secure}, if for any non-uniform adversary $\adv$ corrupting the server in the OT-hybrid world, there exists a non-uniform adversary $\Sim_{\adv}$ (called the simulator) corrupting the server in the ideal-world, such that for all $\kappa\in\N$, $x\in\X$, $y\in\Y$, and $\aux\in\zo^*$ it holds that $$\SD\of{\Out^{\HYBRID}_{\adv\of{x,\aux},\Pi}\of{x,y,1^{\kappa}},~\Out^{\IDEAL}_{\Sim_{\adv}\of{x,\aux},f}\of{x,y,1^{\kappa}}}\leq\eps\of{\kappa}.$$
+    We say that $\Pi$ has perfect server security if it is 0-server secure.
+    
+    \item\label{item:malcl}\normalfont{\textbf{Client Security:}} We say that $\Pi$ is \emph{$\eps$-client secure}, if for any non-uniform adversary $\adv$ corrupting the client in the OT-hybrid world, there exists a non-uniform simulator $\Sim_{\adv}$ corrupting the client in the ideal-world, such that for all $\kappa\in\N$, $x\in\X$, $y\in\Y$, and $\aux\in\zo^*$ it holds that$$\SD\of{\View^{\HYBRID}_{\adv\of{y,\aux},\Pi}\of{x,y,1^{\kappa}},~\View^{\IDEAL}_{\Sim_{\adv}\of{y,\aux},f}\of{x,y,1^{\kappa}}}\leq\eps\of{\kappa}.$$
+     We say that $\Pi$ has perfect client security if it is 0-client secure.
+    \end{enumerate}
+    
+     We say that $\Pi$ computes $f$ with \emph{$\eps$-statistical full-security}, if $\Pi$ is correct, is $\eps$-server secure, and is $\eps$-client secure. Finally, we say that $\Pi$ computes $f$ with \emph{perfect full-security}, if it computes $f$ with \emph{$0$-statistical full-security}.
+\end{definition}
+
+A perfect reduction from $\sOT{1}{t}{h}$ to $\OT$ was put forward in the elegant work of~\citet{BCS96}, which constitutes one of the few examples of perfect reductions to $\bOT{1}{2}$ known so far.
+
+\begin{theorem}\label{thm-int}%[\cite{BCS96}]
+	There exists a protocol $\Pi$ in the 1-round OT-hybrid world that computes $\sOT{1}{t}{h}$ with perfect full-security. Furthermore, its communication complexity is $\ell\leq (t-1)5h$. We refer to it as the $\INT$ protocol.
 \end{theorem}
-%For $\OT{k}{n}$ or $\sOT{k}{n}{h}$, it will be convenient to denote the input domain $X$ as $X=\{c\in\{0,1,\bot\}^n|c\text{ contains exactly }k\text{ non-}\bot\text{ values}\}$. 
 
-\section{Our model}
-We consider secure evaluation of client-server (non interactive, deterministic) functionalities $f:X\times Y\rightarrow Z$ for finite domains $X,Y,Z$, where the client outputs $f(x,y)$ and the server outputs $\bot$ (has no output).\footnote{All the definitions below readily generalize to randomized functionalities $f$, but we focus on deterministic $f$ for simplicity.} 
-We focus on finite functionalities $f$ (that is $X,Y,Z$ are finite, and independent of a security parameters $k$).
+Protocols in the OT-hybrid model are potentially useful for optimizing the complexity of real-world, computationally secure protocols that are based on our construction, as OT extension allows to implement $\sOT{1}{2}{h}$ using a sublinear (in $\kappa$) number of calls to $\bOT{1}{2}$ and some additional sublinear work, assuming a strong variant of PRG~\cite{IKOS08}. Also, this is \wlg in our perfectly secure setting it costs only time $O(t\kappa)$ \bnote{What is $t$?} to convert into a perfect protocol in the $\bOT{1}{2}$-hybrid model by using the 1-round perfect reduction from Theorem~\ref{thm-int}.\TODO{Verify}
+%For $\bOT{k}{n}$ or $\sOT{k}{n}{h}$, it will be convenient to denote the input domain $X$ as $X=\{c\in\{0,1,\bot\}^n|c\text{ contains exactly }k\text{ non-}\bot\text{ values}\}$. 
 
-We consider secure evaluation of such $f$ in the stand-alone setting, with unconditional security, against a non adaptive malicious adversary corrupting a single party.
-We work in an ``enhanced'' version of the OT-hybrid model where in every round a party either sends information over the point-to-point channel, or the parties make a call to a perfectly secure implementation of ${\OT{1}{2}}^l$ for some number $l$ that may depend on the round number (the client plays the receiver's role in all the oracle calls), which is rather standard. We assume the order of speaking is fixed, and does not depend on the communication so far, the inputs, or the randomness.
-\footnote{The point-to-point channel is not necessary in 1-round protocols where the client does not send messages to the server, as any messages sent to the client over this channel can be emulated by the OT channel.} 
-For client and server inputs $c\in\{0,1\}^l$, $s=((s_{1,1},s_{1,2}),\ldots,(s_{l,1},s_{l,1}))$ to ${\OT{1}{2}}^l$, respectively, we let $s[c]$ denote $s_{1,c_1},\ldots,s_{l,c_l}$.
-
-Our security notion is the standard simulation-based notion as in~\cite{Can00}.
-That is, we require statistical security against a malicious server or a malicious client, and perfect correctness if both parties behave honestly.
-We say a protocol is $\epsilon(k)$-client correct if for any malicious server the simulation error is bounded from above by $\epsilon$.
-
-More specifically, fix a 2PC protocol in the OT-hybrid model, where the parties are dubbed ``client'' and ``server'' respectively.
-For any (non-uniform) adversary $A$ corrupting the server in $\Pi$, and $x\in X,z\in \{0,1\}^*$ define
-$Real^{\Pi,z,x}_A=(OUT_A(1^k,z)(x),View_A(1^k,z)(z))$
-For an ideal-world adversary $S$ controlling the server let 
-$Ideal^{\Pi,z,x}_S=(OUT_S(1^k,z)(x),View_S(1^k,z)(z))$
-We require that for any adversary $A$ there exists a simulator 
-$S_A$ such that for all $x,z$ 
-\[SD(Ideal^{\Pi,z,x}_S,Real^{\Pi,z,x}_A)=neg(k).\]
-Here the ideal-world adversary may not abort the computation (that is, we require full security).
-Additionally, if $A$ is polynomial-time, then so is $S_A$.
-The definition for security against a corrupted client is analogous.
-
-%	We consider standard efficient protocols with efficient simulation against PPT adversaries. The statistically (not perfectly) secure protocols we use as building blocks for our perfect constructions are in fact secure against unbounded adversaries with efficient simulation.
-We say that the protocol is $\epsilon(k)$ server-private if the simulation error against every malicious client is bounded by $\epsilon(k)$.
-
-For simplicity, we do not concern ourselves with the efficiency 
-of protocols or the simulator, and allow all parties to be unbounded.
-The adversaries we allow are also unbounded.
-In fact, our simulator can be made efficient for efficient (in $k$) adversaries, but this is a secondary issue, and is deferred to the full version.
-
-If the simulator's output joint with honest party's output
-corresponding to (every) malicious adversary (server or client respectively) has distance $\leq \epsilon$ from the real world distributions, we say the protocol is $\epsilon$-statistically secure. The protocol is statistically secure if $\epsilon(k)$ is negligible in $k$. If $\epsilon$ equals 0 for all adversaries, we say the protocol is perfectly secure against a malicious server (client).
-%For simplicity, we deviate from the standard MPC model by removing the requirement of the parties and the simulator are efficient (in the security parameter).\footnote{This is only useful for non-perfect protocols, perfect protocols for finite functionalities as we consider are automatically efficient.} 
-
-\paragraph{1-round protocols.}
-
-In this work we further focus on 1-round protocols, where a single call to ${\OT{1}{2}}^l$ is made by the parties.
-In this setting, security against malicious senders reduces to requiring that the 
-client's output distribution alone is consistent with some input distribution $x^*$ over $X$, as the sender has no view and no output.
-For corrupted clients, we again consider only their view alone, as the sender has no output. 
-%\footnote{As we consider perfect protocols and finite functionalities, there is no issue of efficiently finding $x^*$.}
-
-\begin{definition}[1-round protocols in OT-hybrid model]\label{def-prot}
-	A protocol for evaluating $f:X\times Y\rightarrow Z$ are tuples $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$ of randomized algorithms, where $\Pi_Q(x):X\rightarrow \{0,1\}^l$ generates client's query $c$. $\Pi_R(x,c,v):X\times\{0,1\}^l\times  \{0,1\}^l\rightarrow Z$ generates client's output based on $x,c$ and OT reply $v$.\footnote{For some, but not all functions $f$, $x$ is not required as an input to $R$, as $C_x\cup C_{x'}=\phi$ for all $x\neq x'$. It is not hard to prove that a sufficient condition on $f$ for having $C_x\cup C_{x'}=\phi$ in all secure protocols for $f$ is the existence of a $2\times 2$ rectangle $\{y,y'\}\times\{x,x'\}$ in which 3 of the entries are identical, and the other entry differs from these three.} $\Pi_D(y):Y\rightarrow \{0,1\}^{2l}$ is server's generator of OT inputs. We refer to $l$ as the communication complexity of $\Pi$.
-\end{definition}
-
-%For $s=(s_{1,0},s_{1,1},\ldots,s_{l,0},s_{l,1})\in\{0,1\}^{2l}$,
-%and $c\in\{0,1\}^l$, we let $s[c]$ denote $(s_{1,c_1},\ldots,s_{l,c_l})$.
-%For a vector $c\in \{0,1,\bot\}^l$ $s[c]$ is defined as above, but if $c_i=\bot$ the $i$'th entry in $s[c]$ equals $\bot$.
-
-
-A protocol $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$ as in Definition~\ref{def-prot} with CC $l$ operates in the ${\OT{1}{2}}^l$-hybrid model as described above.\footnote{In particular, it first receives all inputs and only then returns all the outputs to the client. No rushing such as sending inputs to a certain OT instance after getting outputs from other OT instances is possible.}
-That is, it is specified by a pair of randomized Turing machines $\Pi^?_C,\Pi^?_S$ with oracle access to an idealized functionality ${\OT{1}{2}}^l$ operating as follows
-\begin{enumerate}
-	\item[$\Pi^?_C(x;r):$] 
-	Let $c=\Pi_Q(x;r)$. Send $c$ as input to the ${\OT{1}{2}}^l$ oracle, and let $v$ denote the oracle's output. Output $\Pi_R(x,c,v;r)$.
-	\item[$\Pi^?(y;r):$] Let $s=\Pi_D(y;r)$, and send it to the 
-	${\OT{1}{2}}^l$ oracle.  
-\end{enumerate}
-Both algorithms $\Pi_C,\Pi_S$ run in parallel, in a single round.
-We will usually use the notation $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$ to denote protocols, while $\Pi_C,\Pi_S$ are implicit.
-
-The above definition defines the syntax of protocols we consider. In the following (this and following section) we discuss the security requirements we pose on our protocols.
-
-We will usually state our protocols in a hybrid model where the parties have access to some $l$ oracles $\sOT{1}{t_i}{h_i}$ in parallel, where $l$ and $(t_i,h_i)$ are numbers of our choice. 
-This is potentially useful for optimizing the complexity of real-world, computationally secure protocols that are based on our construction, as OT extension allows to implement $\sOT{1}{2}{h}$ using a sublinear (in $k$) number of calls to $\OT{1}{2}$ and some additional sublinear work, assuming a strong variant of PRG~\cite{IKOS08}. 
-Also, this is wlog. in our perfectly secure setting and costs only linear time $O(tk)$ to convert into a perfect protocol in the $\OT{1}{2}$-hybrid model by using the 1-round perfect reduction from Theorem~\ref{thm-int}.
-
-From now on, all out definitions apply to 1-round protocols for client-server functionalities (in the OT hybrid), as we only consider this type of protocols. 
-
+We next describe a stronger notion for security against a corrupt server.
 \begin{definition}\label{def-enh-cl}
-Here, we assume that $f$ is defined on $f:X\times Y \rightarrow Z$,  where $\bot\in Y,Z$ and $f(x,y)=\bot$ iff. $x=\bot$.	
-We say a protocol $\Pi$ as in Definition~\ref{def-prot} evaluates $f$ with  $\epsilon$-enhanced client correctness if it satisfies the same definition as $\epsilon$-client correctness, with the following additional guarantee.
-For any (deterministic) server strategy $S^*$, there exists a distribution $Y^*$ over $Y$ such that for all $x$,
-\[\Delta(\Pi_R(x,c\leftarrow \Pi_Q(x),S^*[c]), f(x,Y^*))\leq \epsilon p_{\bot}\] where $p_\bot=Pr_{Y^*}(\bot)$. \footnote{This enhances the $\epsilon$-client correctness requiring only a distance bound 
-of $\epsilon$, rather than $\epsilon p_\bot$.} 
-\end{definition}
+Let $f:\X\times\Y\mapsto\Z$. Assume that $\bot\in\X,\Z$ and that $f(x,y)=\bot$ if and only if $x=\bot$. Let $\Pi$ be protocol which computes $f$ in the 1-round OT-hybrid model with $\CC$ of $\ell$. We say that $\Pi$ computes $f$ with \emph{strong $\eps$-server security} if in addition to being $\eps$-server secure, $\Pi$ also satisfies the following. For any possible message $\m^*\in\zo^{2\ell}$ sent by a corrupt server, there exists a distribution $X^*$ over $\X$ such that for all $y\in\Y$
+$$
+\SD_{\substack{\myvec{b}\from\Pi_C(y),\\x\from X^*}}
+\of{\Pi_O(y,\myvec{b},\myvec{m}^*[\myvec{b}]), f(x,y)}\leq \eps\cdot p_{\bot},
+$$
+where $p_\bot=\Pr_{x\from X^*}[x=\bot]$. \footnote{This enhances the $\eps$-server security requiring only a distance bound 
+of $\eps$, rather than $\eps p_\bot$.} 
+\end{definition}\TODO{Think whether or not we should move this to the main part of the paper}
 
-The second notion is a relaxation of perfect client correctness.\footnote{This is a relaxation as it allows for conditional abort. It also strengthens the definition in the sense that every deterministic server strategy induces a single effective input $y$, rather than a distribution.}
+We next give another notion of security against a malicious server. In this notion we modify the ideal-world in some way. On the one hand, the server is deterministic, while on the other hand, it may choose some predicate, such that the client will receive an output if its input satisfies the predicate.%\footnote{This is a relaxation as it allows for conditional abort. It also strengthens the definition in the sense that every deterministic server strategy induces a single effective input $x$, rather than a distribution.}
 
 \begin{definition}
-Here we assume $\bot\in Y$.	
-In the model with input-dependent client-security, we modify the ideal model to allow the simulator send a single value $y^*\in Y$ to the TP.	
-It also gives the TP a predicate $P$ such that the TP sends the client $f(x,y)$ if $P(x)=0$, and $f(x,\bot)$ otherwise.	
-We say a protocol $\Pi$ as in Definition~\ref{def-prot} evaluates $f$
-with perfect input-dependent security, if for any adversary ,there exists a simulator with simulation error of 0.
-\end{definition}
+Let $f:\X\times\Y\mapsto\Z$. Assume that $\bot\in\X$. %,\Z$ and that $f(x,y)=\bot$ if and only if $x=\bot$.
+In the model with \emph{input-dependent}, we modify the ideal-world so that the malicious simulator for the server, in addition to sending an input $x^*\in\X$, it also gives $\trustp$ a predicate $P:\Y\mapsto\zo$. $\trustp$ then sends to the client $f(x^*,y)$ if $P(y)=0$, and $f(\bot,y)$ otherwise.\footnote{This is somewhat different from standard notions where the client receive $\bot$ rather then server having an input $\bot$.} We let $\Out^{\ID}_{\adv\of{x,\aux},f}\of{x,y,1^{\kappa}}$ denote the output of the client in a random execution of of the above ideal-world process, with an $\adv$ corrupting the server.
 
-\subsubsection{Restating security requirements geometrically.}
+Let $\Pi$ be a protocol that computes $f$ in the 1-round OT-hybrid model and let $\eps(\cdot)$ be a function of the security parameter. We say that $\Pi$ computes $f$ with \emph{$\eps$-input-dependent security}, if for every non-uniform \emph{deterministic} adversary $\adv$ corrupting the server in the OT-hybrid world, there exists a non-uniform \emph{deterministic} adversary $\Sim_{\adv}$ corrupting the server in the input-dependent ideal-world, such that for all $\kappa\in\N$, $x\in\X$, $y\in\Y$, and $\aux\in\zo^*$ it holds that $$\SD\of{\Out^{\HYBRID}_{\adv\of{x,\aux},\Pi}\of{x,y,1^{\kappa}},~\Out^{\ID}_{\Sim_{\adv}\of{x,\aux},f}\of{x,y,1^{\kappa}}}\leq\eps\of{\kappa}.$$
+We say that $\Pi$ computes $f$ with \emph{perfect input-dependent security}, if it computes $f$ with \emph{0-input-dependent security}.
+\end{definition}\TODO{Find definition in the literature.}
+
+\subsection{Restating Security Requirements Geometrically}
 
 We take a similar approach to that of~\cite{Ash14} 
-to representing (some of the) protocols' security requirements geometrically.
-%More specifically, we represent the client's output distributions vector for a given server's strategy as a vector over $\R^t$ for a suitable $t$. This vector bundles together client output dsitributions for all client's inputs, with a subset of coordinates corresponding to each client's input. A protocol $\Pi$ defines a region $P_S$ of achievable distributions corresponding to all possible (possibly malicious) server strategies.
+to representing the server-security requirements geometrically. 
 
-%Similarly, for a given client's strategy, we consider the client's vector of \emph{views}, with a subset of coordinates corresponding to each server's input $y$.  Similarly to $P_S$, $\Pi$ defines a region $P_C$ of achievable distributions corresponding to all client's strategies. 
+\paragraph{Boolean functions.}
+We start with Boolean functions. For any function $f:\X\times\Y\mapsto\zo$ we associate a matrix $M_f$ defined as $M_f\of{x,y}=f(x,y)$. Let $\X=\set{x_1,\ldots,x_n}$.
+Observe that in the ideal-world, every strategy that is employed by a simulator corrupting the server can be encoded with a probability vector $\p\in\R^{n}$, where $p_i$ corresponds to the probability of sending $x_i$ to $\trustp$. Therefore, if the input of the client is $y$, then the probability that the output is 1, equals to $\p^T\cdot M_f(\cdot,y)$. 
+On the other hand, in the 1-round OT-hybrid model, a malicious server can only choose a string $\myvec{m}^*\in\zo^{2\ell}$ and send in to the OT. Then on input $y\in\Y$, the probability the client outputs 1 is exactly
+$$q^{\Pi}_y:=\Pr_{\b\from\Pi_C\of{y}}\left[\Pi_O\of{y,\b,\m^*[\b];r}=1\right].$$
+Therefore simulation is possible if and only if for every $\m^*\in\zo^{2\ell}$ there exists a probability vector $\p\in\R^n$ such that for every $y\in\Y$
+$$\p^T\cdot M_f\of{\cdot,y}=q^{\Pi}_y,$$
+or equivalently the vector $\q^{\Pi}:=(q^{\Pi}_y)_{y\in\Y}$ belongs to the \emph{convex-hull} of the rows of $M_f$.
 
-More specifically, for client correctness, we consider row distribution vectors achievable 
-in the ideal model. That is, the region $\tilde{P}_S$ denotes all achievable row distributions corresponding to possible ideal-world server strategies.
-This region simply corresponds to the convex hall of the rows of $f$'s 
-truth table $F$.
+\paragraph{General functions.}
+We next extend the above discussion to non-Boolean functions. For any function $f:\X\times\Y\mapsto\Z$, for every $z\in\Z$ we associate a matrix $M_f^{z}$ defined as 
+$$
+M_f^z\of{x,y}=
+\begin{cases}
+1&\text{ if }f(x,y)=z\\
+0&\text{ otherwise}
+\end{cases}
+$$
+Let $\Z=\set{z_0,\ldots,z_{k-1}}$. Similarly to the Boolean case, in the ideal world, every strategy that is employed by a corrupt server can be encoded with a probability vector $\p\in\R^{n}$, hence the probability that the client will output $z$ on input $y$ is $\p^T\cdot M_f^z\of{\cdot,y}$. In the 1-round OT-hybrid model, for a string $\myvec{m}^*\in\zo^{2\ell}$ chosen by a malicious server, the probability to output $z$ equals
+$$q^{\Pi}_{y,z}:=\Pr_{\b\from\Pi_C\of{y}}\left[\Pi_O\of{y,\b,\m^*[\b];r}=z\right].$$ 
+Therefore simulation is possible if and only for every $\m^*\in\zo^{2\ell}$ there exists a probability vector $\p\in\R^n$ such that for every $y\in\Y$ and for every $z\in\Z$
+$$\p^T\cdot M^z_f\of{\cdot,y}=q^{\Pi}_{y,z}.$$
+Observe that since $\p$ is a probability vector and since $\sum_z M_f^z$ is the all-one matrix, it is enough to consider $k-1$ equations instead of the $k$ equations we stated above. Let $M_f=\left[M_f^{z_1}||\ldots||M_f^{z_{k-1}}\right]$ be the concatenation of the matrices by columns. Then the above is equivalent to saying that the vector $\q^{\Pi}:=\left((q^{\Pi}_{y,z_i})_{y\in\Y}\right)_{i=1}^{k-1}$ belongs to the \emph{convex-hull} of the rows of $M_f$. It will be convenient to index the columns of $M_f$ with $(y,z)$, namely, we let $M_f\of{x,(y,z)}=M_f^z\of{x,y}$. We now have an equivalent definition of perfect server security.
 
-%Jumping ahead, our representation of distributions will be such that the region $\tilde{P}_S$ will roughly correspond to convex combinations of row and column vectors of the function's truth table.
+\begin{lemma}
+Let $\Pi$ be a protocol for computing $f:\X\times\Y\mapsto\Z$ in the 1-round OT-hybrid model. Then $\Pi$ has perfect server security if and only if $\q^{\Pi}\in\CH{\set{M_f^T\of{\cdot,x}}_{x\in\X}}$.
+\end{lemma}
 
-To achieve security against a malicious server, we require that
-the region of real-world achievable row distributions $P_S$ satisfies
-$P_S\subseteq \tilde{P}_S$.
-Properties 2,3 in the security definition are verified directly.
-%For honest correctness (that is, the protocol always outputs the correct value if both parties behave honesly), we make a separate requirement on distribution vectors corresponding to valid client and server strategies. %While the first two requirements are readily expressed as a single LP (linear program)~\cite{}, it is unclear how to incorporate the third requirement into the same program. 
+Next we restate the notion of strong $\eps$-server security in geometrical terms.
 
+\begin{claim}\label{obs-geom-enh-cl}
+Let $f:\X\times\Y\mapsto\Z$. Assume that $\bot\in\X,\Z$ and that $f(x,y)=\bot$ if and only if $x=\bot$.	Let $\Pi$ be a protocol for computing $f$ in the 1-round OT-hybrid model with $\CC$ $\ell$. Then $\Pi$ is strong $\eps$-server secure if and only if the following holds. For every message $\m^*\in \{0,1\}^{2\ell}$ sent by a malicious server in the OT-hybrid world, there exists a probability vector $\p=\vect{p_x}_{x\in\X}\in\R^{|\X|}$ such that for every $y\in\Y$ it holds that
+	$$\SD_{\myvec{b}\from\Pi_C(y)}\of{\Pi_O\of{y,\b,\m^*[\b]},\p^T\cdot M_f\of{\cdot,(y,\cdot)}}\leq \eps\cdot p_\bot,$$
+	where $M_f\of{\cdot,(y,\cdot)}=\vect{M_f^z\of{\cdot,y}}_{z\in\Z}$.%\footnote{This is not exactly equivalent to enhanced $\eps$-client correctness, as the parameters here are slightly worse, but this is all we need, and it simplifies the definition.}
+\end{claim} 
 
-\paragraph{Geometric representation of client's output distributions.}
-Fix a protocol $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$
-as in Definition~\ref{def-prot} for evaluating a functionality $f:X\times Y\rightarrow Z$. For the sake of defining our output distributions we view the protocol as merely randomized mapping from $X\times Y$ to client outputs $Z$, and do not require it to securely evaluate $f$, or even correctly evaluate it if everyone behaves honestly.
+\subsection{Stating The Main Result}
+With the above representation in mind, we are now ready to state our main result. We first recall the definition of a full-dimensional function, as stated in \cite{Ash14}.
 
-\paragraph{Boolean functions.} Fix $Z=\{0,1\}$. For a given server's strategy $\Pi^*_D(x=y;r)=s^*$ for some fixed $s^*\in\{0,1\}^{2l}$\footnote{This notion naturally generalizes to randomized strategies, but we do not need this extent of generality here.}, 3we consider the distributions of the client's output at the end of a protocol execution $\Pi^*=(\Pi_Q,\Pi_R,\Pi^*_D)$ (that is, a protocol resulting from $\Pi$ when the server runs $\Pi^*_D$ instead of $\Pi_D$). We denote this set of distributions
-by a vector $o\in \R^{|X|}$ indexed by $x\in [|X|]$. Here $o_x=p$ denotes the probability of the client outputting $1$ on input $x$
-That is,
-\[o_x = Pr_r[\Pi_Q(x;r)=c;\Pi_R(x,c,s^*[c])=1].\]
-
-We refer to such a vector corresponding to some (possibly invalid) server's strategy $s^*$ as a \emph{geometric row distribution} for $\Pi$. 
-We shall also consider geometric row distributions for the ideal model evaluating $f$, corresponding to server's input distributions $y\in Y$, referring to them as a row distribution for $f$. We omit $\Pi,f$ whenever clear from the context.
-
-Observe that the single number $o_x$ uniquely encodes a distribution over the client's output set $\{0,1\}$ on input $x$.\footnote{The vector $o$ represents $|X|$ separate distributions, one for each client's input $x$. Nothing is implied about the correlation between client's outputs on different inputs for a given server's strategy $s^*$.} Similarly, we consider \emph{geometric column distributions} for $\Pi$: for a given client's strategy $c^*\in\{0,1\}^l$ for its input to the OT oracle, we consider the corresponding \emph{geometric column} distribution vector $o\in \{0,1\}^{|Y|}$ indexed by  $y\in [|Y|]$, where $o_y$ is the probability of the client outputting $1$ for server input $y$. That is:
-\[o_y = Pr_r[\Pi_R(x,c^*,\Pi_D(y;r)[c^*])=1].\]
-
-\paragraph{General functions.} Generalizing for larger $Z=\{0,1,\ldots,k-1\}$, a (geometric) row distribution $o\in \mathbb{R}^{(k-1-1)|X|}$, has entries labeled by
-pairs $(x,i)$ where $x\in [|X|],i\in Z\setminus{\{0\}}$, and $o_{(x,i)}$ denotes the probability of outputting $i$ on input $x$. Thus, for every $x,i$ we have $\sum_j o_{(x,j)}\leq 1$, and $o_{(x,i)}\geq 0$.\footnote{The decision to exclude 0 is merely aesthetic, intended to remain consistent with standard binary truth tables.}
-As in the case of $|Z|=2$, this vector fully represents the client's output distribution for each input $x$. A similar extension can be made for (geometric) row distributions. For a given $x\in X$, let $o_x$ denote the sub-vector $(o_{x,z})_{z\in [k-1]}$.
-%Also, the notion naturally extends to secure computation of randomized client-server functionalities $f:X\times Y\rightarrow Z$. Here exactly the same notions of client output distributions apply.
-
-\paragraph{Truth tables.} In the truth table $F$ of $f$, we index rows by elements of $Y$ and columns by elements of $X$. For $Z=\{0,1\}$, the truth table representation we consider is just the standard one: a table where entry $(y,x)$ equals $f(x,y)$. We use $F_y$ to denote the row vector ($X_x$ to denote the column) in $F$ corresponding to $y$ ($x$).
-We observe that each row $F_y$ in this case is a geometric row distribution in the ideal model, where the server inputs $y$. We can interpret $Y_{y,x}$ as $f(x,y) = p$, where $p$ is the probability of outputting $1$ (either $p=0$ or $p=1$). 
-
-
-Let us generalize this form to larger $Z$. We represent the truth table in "unary", where for each $y,x$ we have $|Z|-1$ columns $(x,z)_{z\in [|Z|-1]}$, and we set $F((x,z),y)=1$
-if $f(x,y)=z$, and $F((x,z),y)=0$ otherwise (if $f(x,y)=0$, all entires $F((x,z),y)$) will be $0$).\footnote{This is instead of having a single entry for each $(x,y)$ with values in $Z$.}
-Again, each row $F_y$ is a valid geometric row distribution in the ideal world (corresponding to a server input of $y$).
-
-\begin{definition}[~\cite{Ash14}]
-	We say a function $f:X\times Y\rightarrow Z$ is full-dimensional if the affine dimension of the row set of its truth table $F$ is the maximal possible - $(|Z|-1)|X|$.
+\begin{definition}[full-dimensional function]
+A function $f:\X\times\Y\mapsto\Z$ is called \emph{full-dimensional} if $$\operatorname{dim}\of{\aff{\set{M_f^T\of{\cdot,x}}_{x\in\X}}}=(|\Z|-1)\cdot|\Y|,$$
+namely, the affine-hull defined by the rows of $M_f$ spans the entire vector space.
 \end{definition}
 
-\paragraph{Definition of security.}
-As mentioned above, for client-server functionalities, the standard requirement of perfect stand-alone security in the ${\OT{1}{2}}^l$-hybrid model can be restated as three separate requirements, all involving only the client's output distribution.
-%Let us recall the standard definitions of security against malicious parties in the ${\OT{1}{2}}^l$-hybrid model.
-%\begin{definition}
-%Let $\Pi$ denote a protocol for evaluating a function $f$ as in %Defintion~\ref{def-prot} in the ${\OT{1}{2}}^l$-hybrid model. Then it evaluates $f$ with malicoius security against a non adaptive malicious adversary if it satisfies:
-%\begin{itemize}
-%	\item[Security against malicious servers:]
-%	For all algorithms $\Pi^*_D(y;r)$, there exists a randomized simulator algorithm $Sim^*_D(y;r):Y\rightarrow Y$ such that for all $x\in X,y\in Y,r_s$, the following equality of distributions holds.
-%	\[\Pi_R(x,\Pi_Q(x;r_c),\Pi_D(y;r_s))=f(x,Sim^*_D(y;r_s))\]
-%	\footnote{Wlog. we may assume $\Pi^*_D$ is deterministic. Also note that we do not require that the algorithms (as we generally consider finite functionalities). Due to the simple structure of $\Pi$ the above requirement can be further simplified to requiring that for all $.$ there exists a distribution $Y^*$ over $Y$ such that 
-%	\[\Pi_R(x,\Pi_Q(x;r_c),s^*)=f(x,Y^*)\].}
-%\end{itemize}
-%\end{definition}
-%\atodo{Is this defintion acceptable, or should I use the standard definition, with auxiliarry input $z$ and efficient simulation?}
-For such functionalities and protocols $\Pi$ as in Definition~\ref{def-prot} the standard definition of perfect security against malicious parties is ``almost'' equivalent to the following definition.
-It would be fully equivalent if it required simulation of efficient (in $k$) adversaries is also efficient. Our protocols in fact satisfy the stronger definition, as we prove in the full version. We ignore efficiency issues altogether in this work for the sake of simplicity. 
+\begin{theorem}
+Let $f:\X\times\Y\mapsto\Z$ be some function. If $f$ is full-dimensional, then there exists a protocol $\Pi$ in the 1-round OT-hybrid model, that computes $f$ with perfect full-security with communication complexity $\ell=$.\TODO{Fill in the CC.}
+\end{theorem}
+The protocol is presented in \TODO{Fill}.
 
-For simplicity, our security definition is stated without account for auxiliary information $z$ that the adversary and simulator receive regarding the other party's input, required for sequential composition. It is easy to see that it in fact follows from our definition below. 
+% \section{Our model}
+% We consider secure evaluation of client-server (non interactive, deterministic) functionalities $f:X\times Y\rightarrow Z$ for finite domains $X,Y,Z$, where the client outputs $f(x,y)$ and the server outputs $\bot$ (has no output).\footnote{All the definitions below readily generalize to randomized functionalities $f$, but we focus on deterministic $f$ for simplicity.} 
+% We focus on finite functionalities $f$ (that is $X,Y,Z$ are finite, and independent of a security parameters $k$).
 
-In our security definition, security against malicious servers is stated in geometrical terms, which will be useful for use later.
-%In particular (in both direction), we take advantage of the fact that the server recieves no messages, and that the parties are unbounded, and consider only the client's view/output respectively. 
+% We consider secure evaluation of such $f$ in the stand-alone setting, with unconditional security, against a non adaptive malicious adversary corrupting a single party.
+% We work in an ``enhanced'' version of the OT-hybrid model where in every round a party either sends information over the point-to-point channel, or the parties make a call to a perfectly secure implementation of ${\bOT{1}{2}}^l$ for some number $l$ that may depend on the round number (the client plays the receiver's role in all the oracle calls), which is rather standard. We assume the order of speaking is fixed, and does not depend on the communication so far, the inputs, or the randomness.
+% \footnote{The point-to-point channel is not necessary in 1-round protocols where the client does not send messages to the server, as any messages sent to the client over this channel can be emulated by the OT channel.} 
+% For client and server inputs $c\in\{0,1\}^l$, $s=((s_{1,1},s_{1,2}),\ldots,(s_{l,1},s_{l,1}))$ to ${\bOT{1}{2}}^l$, respectively, we let $s[c]$ denote $s_{1,c_1},\ldots,s_{l,c_l}$.
 
-\begin{definition}[Perfect security of protocols as in Definition~\ref{def-prot}]\label{perfect-security}
-We say that a protocol $\Pi$ as in Definition~\ref{def-prot} for evaluating a client-server functionality $f:X\times Y\rightarrow Z$ as above is perfectly secure against a single malicious party if it satisfies:
-\begin{enumerate}
-\item Client correctness: For every server's strategy $s^*\in \{0,1\}^{2l}$, the corresponding row distribution $o^*$ of $f'$
-is in $\CH{\{F_y\}_{y\in Y}}$, where the $F_y$'s are the rows of the truth table $F$ of $f$.
-\item Server privacy: For every client strategy $c^*$, there exists a simulator $S$ such that for all $y$,
-$S(1^k)$ is distributed identically to $\Pi_D(y)$. 
+% Our security notion is the standard simulation-based notion as in~\cite{Can00}.
+% That is, we require statistical security against a malicious server or a malicious client, and perfect correctness if both parties behave honestly.
+% We say a protocol is $\epsilon(k)$-client correct if for any malicious server the simulation error is bounded from above by $\epsilon$.
 
-\item Honest correctness: Let $C_x=\support(\Pi_Q(x)),S_y=\support(\Pi_D(y))$. Then for all $c\in C_x,s\in S_y$, $\Pi_R(x,c,s[c])=f(x,y)$.
-\end{enumerate}
-\end{definition}
+% More specifically, fix a 2PC protocol in the OT-hybrid model, where the parties are dubbed ``client'' and ``server'' respectively.
+% For any (non-uniform) adversary $A$ corrupting the server in $\Pi$, and $x\in X,z\in \{0,1\}^*$ define
+% $Real^{\Pi,z,x}_A=(OUT_A(1^k,z)(x),View_A(1^k,z)(z))$
+% For an ideal-world adversary $S$ controlling the server let 
+% $Ideal^{\Pi,z,x}_S=(OUT_S(1^k,z)(x),View_S(1^k,z)(z))$
+% We require that for any adversary $A$ there exists a simulator 
+% $S_A$ such that for all $x,z$ 
+% \[SD(Ideal^{\Pi,z,x}_S,Real^{\Pi,z,x}_A)=neg(k).\]
+% Here the ideal-world adversary may not abort the computation (that is, we require full security).
+% Additionally, if $A$ is polynomial-time, then so is $S_A$.
+% The definition for security against a corrupted client is analogous.
 
-Next we restate Definition~\ref{def-enh-cl} in geometrical terms.
+% %	We consider standard efficient protocols with efficient simulation against PPT adversaries. The statistically (not perfectly) secure protocols we use as building blocks for our perfect constructions are in fact secure against unbounded adversaries with efficient simulation.
+% We say that the protocol is $\epsilon(k)$ server-private if the simulation error against every malicious client is bounded by $\epsilon(k)$.
 
-\begin{observation}\label{obs-geom-enh-cl}
-	Consider a protocol $\Pi$ evaluating a function $f$ as in Definition~\ref{def-enh-cl} with $\epsilon$-enhanced client correctness.
-	Then the following holds. 
-	For every server's strategy $s^*\in \{0,1\}^{2l}$, 
-	there exists an ideal world row distribution $o^*\in \CH{\{F_y\}_{y\in Y}}$ such that 
-	the real world row distribution $o'$ corresponding to $s^*$
-	satisfies 
-	\[\Delta(o',o^*)\leq \epsilon(|Z|-1)p_\bot\]
-	Here $p_\bot$ is the coefficient of $Y_\bot$ in $o^*$.\footnote{This is not exactly equivalent to enhanced $\epsilon$-client correctness, as the parameters here are slightly worse, but this is all we need, and it simplifies the definition.}
-\end{observation} 
+% For simplicity, we do not concern ourselves with the efficiency 
+% of protocols or the simulator, and allow all parties to be unbounded.
+% The adversaries we allow are also unbounded.
+% In fact, our simulator can be made efficient for efficient (in $k$) adversaries, but this is a secondary issue, and is deferred to the full version.
 
-\section{Warmup - $Y=\{0,1\}$}
+% If the simulator's output joint with honest party's output
+% corresponding to (every) malicious adversary (server or client respectively) has distance $\leq \epsilon$ from the real world distributions, we say the protocol is $\epsilon$-statistically secure. The protocol is statistically secure if $\epsilon(k)$ is negligible in $k$. If $\epsilon$ equals 0 for all adversaries, we say the protocol is perfectly secure against a malicious server (client).
+% %For simplicity, we deviate from the standard MPC model by removing the requirement of the parties and the simulator are efficient (in the security parameter).\footnote{This is only useful for non-perfect protocols, perfect protocols for finite functionalities as we consider are automatically efficient.} 
+
+% \paragraph{1-round protocols.}
+
+% In this work we further focus on 1-round protocols, where a single call to ${\bOT{1}{2}}^l$ is made by the parties.
+% In this setting, security against malicious senders reduces to requiring that the 
+% client's output distribution alone is consistent with some input distribution $x^*$ over $X$, as the sender has no view and no output.
+% For corrupted clients, we again consider only their view alone, as the sender has no output. 
+% %\footnote{As we consider perfect protocols and finite functionalities, there is no issue of efficiently finding $x^*$.}
+
+% \begin{definition}[1-round protocols in OT-hybrid model]\label{def-prot}
+% 	A protocol for evaluating $f:X\times Y\rightarrow Z$ are tuples $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$ of randomized algorithms, where $\Pi_Q(x):X\rightarrow \{0,1\}^l$ generates client's query $c$. $\Pi_R(x,c,v):X\times\{0,1\}^l\times  \{0,1\}^l\rightarrow Z$ generates client's output based on $x,c$ and OT reply $v$.\footnote{For some, but not all functions $f$, $x$ is not required as an input to $R$, as $C_x\cup C_{x'}=\phi$ for all $x\neq x'$. It is not hard to prove that a sufficient condition on $f$ for having $C_x\cup C_{x'}=\phi$ in all secure protocols for $f$ is the existence of a $2\times 2$ rectangle $\{y,y'\}\times\{x,x'\}$ in which 3 of the entries are identical, and the other entry differs from these three.} $\Pi_D(y):Y\rightarrow \{0,1\}^{2l}$ is server's generator of OT inputs. We refer to $l$ as the communication complexity of $\Pi$.
+% \end{definition}
+
+% %For $s=(s_{1,0},s_{1,1},\ldots,s_{l,0},s_{l,1})\in\{0,1\}^{2l}$,
+% %and $c\in\{0,1\}^l$, we let $s[c]$ denote $(s_{1,c_1},\ldots,s_{l,c_l})$.
+% %For a vector $c\in \{0,1,\bot\}^l$ $s[c]$ is defined as above, but if $c_i=\bot$ the $i$'th entry in $s[c]$ equals $\bot$.
+
+
+% A protocol $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$ as in Definition~\ref{def-prot} with CC $l$ operates in the ${\bOT{1}{2}}^l$-hybrid model as described above.\footnote{In particular, it first receives all inputs and only then returns all the outputs to the client. No rushing such as sending inputs to a certain OT instance after getting outputs from other OT instances is possible.}
+% That is, it is specified by a pair of randomized Turing machines $\Pi^?_C,\Pi^?_S$ with oracle access to an idealized functionality ${\bOT{1}{2}}^l$ operating as follows
+% \begin{enumerate}
+% 	\item[$\Pi^?_C(x;r):$] 
+% 	Let $c=\Pi_Q(x;r)$. Send $c$ as input to the ${\bOT{1}{2}}^l$ oracle, and let $v$ denote the oracle's output. Output $\Pi_R(x,c,v;r)$.
+% 	\item[$\Pi^?(y;r):$] Let $s=\Pi_D(y;r)$, and send it to the 
+% 	${\bOT{1}{2}}^l$ oracle.  
+% \end{enumerate}
+% Both algorithms $\Pi_C,\Pi_S$ run in parallel, in a single round.
+% We will usually use the notation $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$ to denote protocols, while $\Pi_C,\Pi_S$ are implicit.
+
+% The above definition defines the syntax of protocols we consider. In the following (this and following section) we discuss the security requirements we pose on our protocols.
+
+% We will usually state our protocols in a hybrid model where the parties have access to some $l$ oracles $\sOT{1}{t_i}{h_i}$ in parallel, where $l$ and $(t_i,h_i)$ are numbers of our choice. 
+% This is potentially useful for optimizing the complexity of real-world, computationally secure protocols that are based on our construction, as OT extension allows to implement $\sOT{1}{2}{h}$ using a sublinear (in $k$) number of calls to $\bOT{1}{2}$ and some additional sublinear work, assuming a strong variant of PRG~\cite{IKOS08}. 
+% Also, this is wlog. in our perfectly secure setting and costs only linear time $O(tk)$ to convert into a perfect protocol in the $\bOT{1}{2}$-hybrid model by using the 1-round perfect reduction from Theorem~\ref{thm-int}.
+
+% From now on, all out definitions apply to 1-round protocols for client-server functionalities (in the OT hybrid), as we only consider this type of protocols. 
+
+% \begin{definition}\label{def-enh-cl}
+% Here, we assume that $f$ is defined on $f:X\times Y \rightarrow Z$,  where $\bot\in Y,Z$ and $f(x,y)=\bot$ iff. $x=\bot$.	
+% We say a protocol $\Pi$ as in Definition~\ref{def-prot} evaluates $f$ with  $\epsilon$-enhanced client correctness if it satisfies the same definition as $\epsilon$-client correctness, with the following additional guarantee.
+% For any (deterministic) server strategy $S^*$, there exists a distribution $Y^*$ over $Y$ such that for all $x$,
+% \[\Delta(\Pi_R(x,c\leftarrow \Pi_Q(x),S^*[c]), f(x,Y^*))\leq \epsilon p_{\bot}\] where $p_\bot=Pr_{Y^*}(\bot)$. \footnote{This enhances the $\epsilon$-client correctness requiring only a distance bound 
+% of $\epsilon$, rather than $\epsilon p_\bot$.} 
+% \end{definition}
+
+% The second notion is a relaxation of perfect client correctness.\footnote{This is a relaxation as it allows for conditional abort. It also strengthens the definition in the sense that every deterministic server strategy induces a single effective input $y$, rather than a distribution.}
+
+% \begin{definition}
+% Here we assume $\bot\in Y$.	
+% In the model with input-dependent client-security, we modify the ideal model to allow the simulator send a single value $y^*\in Y$ to the TP.	
+% It also gives the TP a predicate $P$ such that the TP sends the client $f(x,y)$ if $P(x)=0$, and $f(x,\bot)$ otherwise.	
+% We say a protocol $\Pi$ as in Definition~\ref{def-prot} evaluates $f$
+% with perfect input-dependent security, if for any adversary ,there exists a simulator with simulation error of 0.
+% \end{definition}
+
+% \subsection{Restating security requirements geometrically.}
+
+% We take a similar approach to that of~\cite{Ash14} 
+% to representing (some of the) protocols' security requirements geometrically.
+% %More specifically, we represent the client's output distributions vector for a given server's strategy as a vector over $\R^t$ for a suitable $t$. This vector bundles together client output dsitributions for all client's inputs, with a subset of coordinates corresponding to each client's input. A protocol $\Pi$ defines a region $P_S$ of achievable distributions corresponding to all possible (possibly malicious) server strategies.
+
+% %Similarly, for a given client's strategy, we consider the client's vector of \emph{views}, with a subset of coordinates corresponding to each server's input $y$.  Similarly to $P_S$, $\Pi$ defines a region $P_C$ of achievable distributions corresponding to all client's strategies. 
+
+% More specifically, for client correctness, we consider row distribution vectors achievable 
+% in the ideal model. That is, the region $\tilde{P}_S$ denotes all achievable row distributions corresponding to possible ideal-world server strategies.
+% This region simply corresponds to the convex hall of the rows of $f$'s 
+% truth table $F$.
+
+% %Jumping ahead, our representation of distributions will be such that the region $\tilde{P}_S$ will roughly correspond to convex combinations of row and column vectors of the function's truth table.
+
+% To achieve security against a malicious server, we require that
+% the region of real-world achievable row distributions $P_S$ satisfies
+% $P_S\subseteq \tilde{P}_S$.
+% Properties 2,3 in the security definition are verified directly.
+% %For honest correctness (that is, the protocol always outputs the correct value if both parties behave honesly), we make a separate requirement on distribution vectors corresponding to valid client and server strategies. %While the first two requirements are readily expressed as a single LP (linear program)~\cite{}, it is unclear how to incorporate the third requirement into the same program. 
+
+
+% \paragraph{Geometric representation of client's output distributions.}
+% Fix a protocol $\Pi=(\Pi_Q,\Pi_R,\Pi_D)$
+% as in Definition~\ref{def-prot} for evaluating a functionality $f:X\times Y\rightarrow Z$. For the sake of defining our output distributions we view the protocol as merely randomized mapping from $X\times Y$ to client outputs $Z$, and do not require it to securely evaluate $f$, or even correctly evaluate it if everyone behaves honestly.
+
+% \paragraph{Boolean functions.} Fix $Z=\{0,1\}$. For a given server's strategy $\Pi^*_D(x=y;r)=s^*$ for some fixed $s^*\in\{0,1\}^{2l}$\footnote{This notion naturally generalizes to randomized strategies, but we do not need this extent of generality here.}, 3we consider the distributions of the client's output at the end of a protocol execution $\Pi^*=(\Pi_Q,\Pi_R,\Pi^*_D)$ (that is, a protocol resulting from $\Pi$ when the server runs $\Pi^*_D$ instead of $\Pi_D$). We denote this set of distributions
+% by a vector $o\in \R^{|X|}$ indexed by $x\in [|X|]$. Here $o_x=p$ denotes the probability of the client outputting $1$ on input $x$
+% That is,
+% \[o_x = Pr_r[\Pi_Q(x;r)=c;\Pi_R(x,c,s^*[c])=1].\]
+
+% We refer to such a vector corresponding to some (possibly invalid) server's strategy $s^*$ as a \emph{geometric row distribution} for $\Pi$. 
+% We shall also consider geometric row distributions for the ideal model evaluating $f$, corresponding to server's input distributions $y\in Y$, referring to them as a row distribution for $f$. We omit $\Pi,f$ whenever clear from the context.
+
+% Observe that the single number $o_x$ uniquely encodes a distribution over the client's output set $\{0,1\}$ on input $x$.\footnote{The vector $o$ represents $|X|$ separate distributions, one for each client's input $x$. Nothing is implied about the correlation between client's outputs on different inputs for a given server's strategy $s^*$.} Similarly, we consider \emph{geometric column distributions} for $\Pi$: for a given client's strategy $c^*\in\{0,1\}^l$ for its input to the OT oracle, we consider the corresponding \emph{geometric column} distribution vector $o\in \{0,1\}^{|Y|}$ indexed by  $y\in [|Y|]$, where $o_y$ is the probability of the client outputting $1$ for server input $y$. That is:
+% \[o_y = Pr_r[\Pi_R(x,c^*,\Pi_D(y;r)[c^*])=1].\]
+
+% \paragraph{General functions.} Generalizing for larger $Z=\{0,1,\ldots,k-1\}$, a (geometric) row distribution $o\in \mathbb{R}^{(k-1-1)|X|}$, has entries labeled by
+% pairs $(x,i)$ where $x\in [|X|],i\in Z\setminus{\{0\}}$, and $o_{(x,i)}$ denotes the probability of outputting $i$ on input $x$. Thus, for every $x,i$ we have $\sum_j o_{(x,j)}\leq 1$, and $o_{(x,i)}\geq 0$.\footnote{The decision to exclude 0 is merely aesthetic, intended to remain consistent with standard binary truth tables.}
+% As in the case of $|Z|=2$, this vector fully represents the client's output distribution for each input $x$. A similar extension can be made for (geometric) row distributions. For a given $x\in X$, let $o_x$ denote the sub-vector $(o_{x,z})_{z\in [k-1]}$.
+% %Also, the notion naturally extends to secure computation of randomized client-server functionalities $f:X\times Y\rightarrow Z$. Here exactly the same notions of client output distributions apply.
+
+% \paragraph{Truth tables.} In the truth table $F$ of $f$, we index rows by elements of $Y$ and columns by elements of $X$. For $Z=\{0,1\}$, the truth table representation we consider is just the standard one: a table where entry $(y,x)$ equals $f(x,y)$. We use $F_y$ to denote the row vector ($X_x$ to denote the column) in $F$ corresponding to $y$ ($x$).
+% We observe that each row $F_y$ in this case is a geometric row distribution in the ideal model, where the server inputs $y$. We can interpret $Y_{y,x}$ as $f(x,y) = p$, where $p$ is the probability of outputting $1$ (either $p=0$ or $p=1$). 
+
+
+% Let us generalize this form to larger $Z$. We represent the truth table in "unary", where for each $y,x$ we have $|Z|-1$ columns $(x,z)_{z\in [|Z|-1]}$, and we set $F((x,z),y)=1$
+% if $f(x,y)=z$, and $F((x,z),y)=0$ otherwise (if $f(x,y)=0$, all entires $F((x,z),y)$) will be $0$).\footnote{This is instead of having a single entry for each $(x,y)$ with values in $Z$.}
+% Again, each row $F_y$ is a valid geometric row distribution in the ideal world (corresponding to a server input of $y$).
+
+% \begin{definition}[~\cite{Ash14}]
+% 	We say a function $f:X\times Y\rightarrow Z$ is full-dimensional if the affine dimension of the row set of its truth table $F$ is the maximal possible - $(|Z|-1)|X|$.
+% \end{definition}
+
+% \paragraph{Definition of security.}
+% As mentioned above, for client-server functionalities, the standard requirement of perfect stand-alone security in the ${\bOT{1}{2}}^l$-hybrid model can be restated as three separate requirements, all involving only the client's output distribution.
+% %Let us recall the standard definitions of security against malicious parties in the ${\bOT{1}{2}}^l$-hybrid model.
+% %\begin{definition}
+% %Let $\Pi$ denote a protocol for evaluating a function $f$ as in %Defintion~\ref{def-prot} in the ${\bOT{1}{2}}^l$-hybrid model. Then it evaluates $f$ with malicoius security against a non adaptive malicious adversary if it satisfies:
+% %\begin{itemize}
+% %	\item[Security against malicious servers:]
+% %	For all algorithms $\Pi^*_D(y;r)$, there exists a randomized simulator algorithm $Sim^*_D(y;r):Y\rightarrow Y$ such that for all $x\in X,y\in Y,r_s$, the following equality of distributions holds.
+% %	\[\Pi_R(x,\Pi_Q(x;r_c),\Pi_D(y;r_s))=f(x,Sim^*_D(y;r_s))\]
+% %	\footnote{Wlog. we may assume $\Pi^*_D$ is deterministic. Also note that we do not require that the algorithms (as we generally consider finite functionalities). Due to the simple structure of $\Pi$ the above requirement can be further simplified to requiring that for all $.$ there exists a distribution $Y^*$ over $Y$ such that 
+% %	\[\Pi_R(x,\Pi_Q(x;r_c),s^*)=f(x,Y^*)\].}
+% %\end{itemize}
+% %\end{definition}
+% %\atodo{Is this defintion acceptable, or should I use the standard definition, with auxiliarry input $z$ and efficient simulation?}
+% For such functionalities and protocols $\Pi$ as in Definition~\ref{def-prot} the standard definition of perfect security against malicious parties is ``almost'' equivalent to the following definition.
+% It would be fully equivalent if it required simulation of efficient (in $k$) adversaries is also efficient. Our protocols in fact satisfy the stronger definition, as we prove in the full version. We ignore efficiency issues altogether in this work for the sake of simplicity. 
+
+% For simplicity, our security definition is stated without account for auxiliary information $z$ that the adversary and simulator receive regarding the other party's input, required for sequential composition. It is easy to see that it in fact follows from our definition below. 
+
+% In our security definition, security against malicious servers is stated in geometrical terms, which will be useful for use later.
+% %In particular (in both direction), we take advantage of the fact that the server recieves no messages, and that the parties are unbounded, and consider only the client's view/output respectively. 
+
+% \begin{definition}[Perfect security of protocols as in Definition~\ref{def-prot}]\label{perfect-security}
+% We say that a protocol $\Pi$ as in Definition~\ref{def-prot} for evaluating a client-server functionality $f:X\times Y\rightarrow Z$ as above is perfectly secure against a single malicious party if it satisfies:
+% \begin{enumerate}
+% \item Client correctness: For every server's strategy $s^*\in \{0,1\}^{2l}$, the corresponding row distribution $o^*$ of $f'$
+% is in $\CH{\{F_y\}_{y\in Y}}$, where the $F_y$'s are the rows of the truth table $F$ of $f$.
+% \item Server privacy: For every client strategy $c^*$, there exists a simulator $S$ such that for all $y$,
+% $S(1^k)$ is distributed identically to $\Pi_D(y)$. 
+
+% \item Honest correctness: Let $C_x=\support(\Pi_Q(x)),S_y=\support(\Pi_D(y))$. Then for all $c\in C_x,s\in S_y$, $\Pi_R(x,c,s[c])=f(x,y)$.
+% \end{enumerate}
+% \end{definition}
+
+% Next we restate Definition~\ref{def-enh-cl} in geometrical terms.
+
+% \begin{observation}\label{obs-geom-enh-cl}
+% 	Consider a protocol $\Pi$ evaluating a function $f$ as in Definition~\ref{def-enh-cl} with $\epsilon$-enhanced client correctness.
+% 	Then the following holds. 
+% 	For every server's strategy $s^*\in \{0,1\}^{2l}$, 
+% 	there exists an ideal world row distribution $o^*\in \CH{\{F_y\}_{y\in Y}}$ such that 
+% 	the real world row distribution $o'$ corresponding to $s^*$
+% 	satisfies 
+% 	\[\Delta(o',o^*)\leq \epsilon(|Z|-1)p_\bot\]
+% 	Here $p_\bot$ is the coefficient of $Y_\bot$ in $o^*$.\footnote{This is not exactly equivalent to enhanced $\epsilon$-client correctness, as the parameters here are slightly worse, but this is all we need, and it simplifies the definition.}
+% \end{observation} 
+
+\section{A Special Case $\X=\{0,1\}$}\bnote{This is not a warmup. Its just a trivial observation. I think we should state in the main result that we assume the server has at least 3 inputs, and the case for 2 inputs will be in the appendix}
 
 As a warmup, we observe that for all finite $Z$
 all client-server functions $f:X\times Y\rightarrow Z$ where $Y=\{0,1\}$
 have a perfectly secure protocol in the OT hybrid model. In turn, this is a special case of a folklore construction for $f$'s where $F$ has a column $x_0$ that \emph{dominates} all other columns (recall that a column $x$ dominates a column $x'$ if for all $y\in Y$ $F(x,y)=F(x,y')$ implies that  $F(x',y)=F(x',y)$.). 
-The protocol in fact does not use OT oracle, and is secure in the plain model.\footnote{The protocol is 1-round, and in particular can be replaced by one as in Definition~\ref{def-prot}, since sending a message in $|Z|$ over a channel can be implemented via a call to $\OT{1}{2}{\log{|Z|}}$ where the message to be sent is placed in both positions.}
+The protocol in fact does not use OT oracle, and is secure in the plain model.\footnote{The protocol is 1-round, and in particular can be replaced by one as in Definition~\ref{def-prot}, since sending a message in $|Z|$ over a channel can be implemented via a call to $\bOT{1}{2}{\log{|Z|}}$ where the message to be sent is placed in both positions.}
 
 This trivial (set of) examples is the only type of functions we know of that is not fully covered by our main construction~\ref{thm-main}. 
 
@@ -445,60 +743,94 @@ A malicious server's behavior can also be simulated, as it sends a message distr
 %First observe that wlog. we may assume $Z=\{0,1\}$, as for each input $x$ we only need two labels for $f(x,y)$.\footnote{In general, we may assume $|Z|\leq |Y|$.}
 
 
-\section{A perfect protocol where $F$ is full-dimensional}
-Due to the simple structure of 1-round protocols in the OT hybrid model,
-the first two security requirements are fully expressed as a single LP (linear program)~\cite{Kan39, Dantzig60} specifying $(\Pi_Q,\Pi_D,\Pi_R)$. However, it is unclear how to incorporate the third requirement into the same program. Thus, we do not write an explicit LP searching for a specification of $(\Pi_Q,\Pi_D,\Pi_R)$.
-The resulting LP is not trivial to solve even for requirements 1,2 alone in~\ref{perfect-security}. 
-Instead, we take a similar road to that used in the fairness literature, which considers protocols with more general structure. We suggest a concrete protocol, and prove it is secure for a certain subclass of functions. 
+\section{A Perfect Protocol for Full-Dimensional Functions}
+% Due to the simple structure of 1-round protocols in the OT hybrid model,
+% the first two security requirements are fully expressed as a single LP (linear program)~\cite{Kan39, Dantzig60} specifying $(\Pi_Q,\Pi_D,\Pi_R)$. However, it is unclear how to incorporate the third requirement into the same program. Thus, we do not write an explicit LP searching for a specification of $(\Pi_Q,\Pi_D,\Pi_R)$.
+% The resulting LP is not trivial to solve even for requirements 1,2 alone in~\ref{perfect-security}. 
+% Instead, we take a similar road to that used in the fairness literature, which considers protocols with more general structure. We suggest a concrete protocol, and prove it is secure for a certain subclass of functions. \bnote{This paragraph seems redundant. Why do you explain an approach that does not work and does not have way to ``fix''?}
 
-For every such function, we separately verify that each of conditions 1,2,3 in Definition~\ref{def-prot}.
-As in the fairness literature, we do use techniques related to solving LP's (analyzing the convex hall of a certain point set) only for proving condition 1 is satisfied by our protocol, but not for searching for a protocol.
+% For every such function, we separately verify that each of conditions 1,2,3 in Definition~\ref{def-prot}. \bnote{What are conditions 1,2, and 3? They don't appear in the definition.}
+% As in the fairness literature, we do use techniques related to solving LP's (analyzing the convex hall of a certain point set) only for proving condition 1 is satisfied by our protocol, but not for searching for a protocol. \bnote{I don't understand. The fairness literature does not use LP for proving stuff. They just build a system of linear equations and solve them.}
 
-Our starting point is a protocol as in Definition~\ref{def-prot} (1-round protocol in the $(\OT{1}{2})^l$-hybrid model for some $l$) by~\cite{IKOPS11}[Section 3]. We denote this protocol by $\Pi_{\text{IKOPS}}$. It is stated for function with $NC_0$ circuits, but we restate it for general function (families), and bound its CC as a function of $|X|,|Y|,|Z|$ (which are assumed to be finite in our work). 
+Our starting point is the IKOPS protocol \cite{IKOPS11}. It is a single round protocol in the $\bOT{1}{2}^\ell$-hybrid model for some $\ell$, that has $\eps$-statistical full-security, for some negligible function $\eps$. The protocol is parametrized with $\eps$, and we denote this protocol by $\Pi_{\IKOPS}(\eps)$. It is stated for functions computable by $\NC^0$ circuits, however, this is only done for improving concrete efficiency, which is not a concern in our paper. We therefore restate it for general functions, and bound its communication complexity as a function of $|\X|,|\Y|,|\Z|$ (which are assumed to be finite in our work).
 
-The reason the protocol in~\cite{IKOPS11} is restricted to $NC_0$ functionalities is for improving concrete efficiency, which is not a concern in our paper.
-Otherwise, their construction works for all functions, as summarized below.
+\paragraph{The IKOPS Protocol.}
+We next present the IKOPS protocol, which we later modify to work in our setting. The idea is the following. First, we view the inputs $x$ and $y$ as a binary strings $x_1,\ldots,x_n$ and $y_1,\ldots,y_m$ respectively.\footnote{We can assume \wlg that the size of $\X$ and $\Y$ are a power of 2. This is due to the fact that we can add new elements to $\X$ such that the new rows in $M_f$ are duplicates of existing rows. We then do the same to $\Y$. It is easy to see that the new function is computable with statistical (perfect) full-security if and only if the previous function is computable with statistical (perfect) full-security.} The idea is to have the server runs an ``MPC in the head'' with $n$ parties in order to compute a decomposable PRE of the function $f$. Since it is decomposable, the output of the MPC is of the form $\vect{\v_0,(\v_{1,0}\of{x;r},\v_{1,1}\of{x;r}),\ldots,(\v_{m,0}\of{x;r},\v_{m,1}\of{x;r})}$, hence the client can use $\bOT12^{m}$ in order to recover the correct output, namely, he receives $\v_0,\v_{y_1}\of{x;r},\ldots,\v_{y_m}\of{x;r}$ and reconstruct the output $f(x,y)$. As part of the ``MPC in the head'' paradigm, the client further ask the server to ``open" the view of some of the parties and check consistency. Note that the client need to receive $\v_0$ in some way. For now, we assume that the server send it in the clear, and later we show how to remove this assumption.
+\begin{proposition}\label{prop:noClearMsg}
+Let $f:\X\times\Y\mapsto\Z$ be some function. Assume that there exists a protocol $\Pi'=\vect{\Pi'_S,\Pi'_C,\Pi'_O}$ single round protocol in the OT-hybrid model ($\Pi'$ is \emph{not} in the 1-round OT-hybrid world) that computes $f$, in the following way. The output of $\Pi'_S$ consist of two parts $\m$ and $\m'$, and the client outputs $\Pi'_O\of{y,\b,\m[\b],\m'}$, where $\b\from\Pi'_C$, \ie the the client receives $\m'$ in the clear and uses it to compute the output. If $\Pi'$ computes $f$ with $\eps$-statistical (perfect) full-security there exists a protocol $\Pi$ in the (standard) 1-round OT-hybrid model that computes $f$ with $\eps$-statistical (perfect) full-security.
+\end{proposition}
 
-\begin{theorem}
-	Let $f:X\times Y\rightarrow Z$ denote any (finite) client-server function.
-	Then for all $\epsilon \geq 0$, $\Pi_{\text{IKOPS}}$ evaluates $f$ with $\epsilon$-relaxed client correctness. 
-	Let $h_i$ denote the smallest formula for evaluating the $i$'th bit of $f(x,y)$, and let $h = max_{i\leq \log(|Z|)} h_i$.
-	Then, $\Pi$ has communication complexity of $l=\log(|Z|)\tilde{O}(\log(|X|) (\log({\epsilon^{-1}})+h)^2)+polylog(\epsilon^{-1})$.
+The proof of \cref{prop:noClearMsg} is presented in\TODO{ADD}. We next fully describe $\Pi_{\IKOPS}\of{\eps}$.
+
+\begin{protocol}[$\Pi_{\IKOPS}\of{\eps}$]~
+
+Input: Server has input $x\in(\X\cup\set{\bot})$ and client has input $y\in\zo^m$. Both parties hold a security parameter $1^{\kappa}$.
+
+Let $f':\X\times\left(\zo^{m'(\eps)}\right)^{ m}\mapsto\Z\cup\set{\bot}$ defined as
+$$f'(x,y_1^1,\ldots,y_1^{m'},\ldots,y_m^{m'})=
+\begin{cases}
+f(x,\xor_{j=1}^{m'}y_1^j||\ldots||\xor_{j=1}^{m'}y_m^j)&\text{ if }x\ne\bot\\
+\bot&\text{ otherwise}
+\end{cases}
+$$
+Let $\hat{f}$ be a decomposable PRE of $f'$.
+
+\begin{enumerate}
+	\item The server runs ``MPC in th head'' and execute the protocol $\Pi$ with the following setting. There are $n=O\of{\kappa\cdot m}$ virtual servers $S_1,\ldots,S_n$ performing the computation, and $2m\cdot m'$ virtual clients $C_{1,0},C_{1,1},\ldots,C_{m\cdot m',0},C_{m\cdot m',1}$ receiving outputs. The virtual parties will compute the following function $g:\zo^{n}\mapsto\zo^{2m\cdot m'}$ defined as
+    $$g()$$
+    
+    \item\label{item:IKOPScomp} The server secret share its input $x$ and randomness $r$ between $S_1,\ldots,S_n$ in a $n$-out-of-$n$ Shamir's secret sharing scheme, and then uses a multiparty protocol in order to compute $\hat{f}$. The protocol used is perfect fully-secure against $t=\ceil{n/3}-1$ corrupted virtual servers and any number of corrupted virtual clients (\eg The BGW protocol \cite{BGW88}).\footnote{The original protocol by \cite{IKOPS11} used statistical fully secure protocol. For our purpose we will use a perfectly secure.}
+    
+    \item Let $V_1,\ldots,V_n$ be the view of $S_1,\ldots,S_n$ and let $V_{1,0},V_{1,1},\ldots,V_{m\cdot m',0},V_{m\cdot m',1}$ be the view of $C_{1,0},C_{1,1},\ldots,C_{m\cdot m',0},C_{m\cdot m',1}$ respectively. The client then uses the $\sOT{1}{2}{h}^m$ functionality in order to receive the set of outputs $\set{V_{i,y_i}}_{i=1}^m$. In addition, for each virtual server $S_j$, the client receive its view $V_j$ with probability $p\in[t/4n,t/2n]$. We call the $V_j$'s that the client receive \emph{watchlist}. Observe that by \cref{thm-int} this can done in the 1-round OT-hybrid model.
+    
+    \item The client verify consistency between each pair of views he received. If they are consistent, then he apply the decoder for the randomized encoding to recover the output $z$. Otherwise the client outputs $f(x_0,y)$ for some default value $x_0$.
+\end{enumerate}
+\end{protocol}
+
+Intuitively, the protocol is secure against malicious server, since to much deviation from the inner MPC protocol would be caught by the client with high-probability. If the client is malicious, then with high enough probability it will \emph{not} receive the view of more than $t$ servers, hence by the assumed security of the computation done in Step~\ref{item:IKOPScomp}, the client will not learn anything on the input of the server. We summarize the properties of the protocol below.
+
+\begin{theorem}[\cite{IKOPS11}, Theorem 1]
+	Let $f:(\X\cup\set{\bot})\times\Y\mapsto\Z$ denote any (finite) client-server function..
+	Then for every $\eps(\cdot)$, $\Pi_{\IKOPS}\of{\eps}$ computes $f$ with correctness, $\eps$-input-dependent security, and $\eps$-client security. Furthermore, let $\alpha_i$ denote the size of the smallest formula for evaluating the $i$'th bit of $f(x,y)$, and let $\alpha=\max_{i\leq \log(|\Z|)} \alpha_i$.	Then, $\Pi_{\IKOPS}$ has communication complexity of $\ell=\log\of{|\Z|}\cdot\tilde{O}\of{\log\of{|\Y|}\cdot\left(\log\of{{\eps^{-1}}}+\alpha\right)^2}+\polylog(\eps^{-1})$.
 \end{theorem}
 
-In a nutshell, in the $\Pi_{\text{IKOPS11}}$ protocol, reduces the evaluation of $f(x,y)$ to secure evaluation of a single instance of $l$ parallel instances of OT $\sOT{1}{2}{h}$ functionality for certain parameters $h,l$ depending on $f,\epsilon$. This is done using a decomposable randomized encodings of $f$~\cite{IK02}. Here we have $l=\log{|X|}$ - the input to $i$'th OT instance is the bit $x_i$. 
-The $y$ is mapped to a string sequence ${(s_{1,0},s_{1,1},\ldots,s_{l,0},s_{l,1})}$ fed to the OT's in a certain manner.
+% In a nutshell, in the $\Pi_{\IKOPS}$ protocol, reduces the evaluation of $f(x,y)$ to secure evaluation of a single instance of $\ell$ parallel instances of $\sOT{1}{2}{h}$ functionality for certain parameters $h,\ell$ depending on $f,\eps$. This is done using a decomposable randomized encodings of $f$~\cite{IK02}. Here we have $\ell=\log{|X|}$ - the input to $i$'th OT instance is the bit $x_i$. 
+% The $y$ is mapped to a string sequence ${(s_{1,0},s_{1,1},\ldots,s_{l,0},s_{l,1})}$ fed to the OT's in a certain manner.
 
-Now, to securely evaluate the resulting functionality in the malicious setting, the OT is replaced by a COT (certified OT) functionality. The COT returns the client the output, and additionally reports whether the resulting string is consistent with some $y$ and randomness $r$, as prescribed by reduction from $f(x,y)$ to the OT instances. 
-$\Pi_{COT}$ verifies that the OT input $s\in\{0,1\}^{2l}$ it feeds to the OT oracle is consistent with some $y,r$ for the reduction. 
-Along with $s$, the server feeds a representation of $y,r$ as a witness that $s$ is consistent.
-It gives client $C_i$ 
-the OT output along with a bit on whether it is consistent (with that witness $y,r$ common for all indices) or not.
+% Now, to securely evaluate the resulting functionality in the malicious setting, the OT is replaced by a COT (certified OT) functionality. The COT returns the client the output, and additionally reports whether the resulting string is consistent with some $y$ and randomness $r$, as prescribed by reduction from $f(x,y)$ to the OT instances. 
+% $\Pi_{COT}$ verifies that the OT input $s\in\{0,1\}^{2l}$ it feeds to the OT oracle is consistent with some $y,r$ for the reduction. 
+% Along with $s$, the server feeds a representation of $y,r$ as a witness that $s$ is consistent.
+% It gives client $C_i$ 
+% the OT output along with a bit on whether it is consistent (with that witness $y,r$ common for all indices) or not.
 
-In the COT implementation, the server runs MPC in the head of an $n'$-party protocol $\Pi$ for evaluating the (randomized) mapping from a pair $(y,r)$ to a sequence $s$. More concretely, the protocol consists of a sender that privately sends $n$ virtual servers its inputs $y,r$, and some $2\log{h}$ clients that receive corresponding OT outputs (the clients do not have inputs). There are also $2l$ clients have no inputs, but client $C_{i,b}$ gets the output of the $i$'th OT instance on input $x_i=b$. 
-In $\Pi$, the virtual servers send messages to the clients in the last round of the protocol.
+% In the COT implementation, the server runs MPC in the head of an $n'$-party protocol $\Pi$ for evaluating the (randomized) mapping from a pair $(y,r)$ to a sequence $s$. More concretely, the protocol consists of a sender that privately sends $n$ virtual servers its inputs $y,r$, and some $2\log{h}$ clients that receive corresponding OT outputs (the clients do not have inputs). There are also $2l$ clients have no inputs, but client $C_{i,b}$ gets the output of the $i$'th OT instance on input $x_i=b$. 
+% In $\Pi$, the virtual servers send messages to the clients in the last round of the protocol.
 
-The COT client chooses the strings corresponding to the views seen by the virtual clients corresponding to its input $x$. Additionally, it asks for the entire view of the each of the virtual servers with some small constant probability $\delta'$. We observe that these so called \emph{watchlists} (the client watches only a small fraction of the virtual server), along with the requests for client's views can be perfectly reduced in one round to $\OT{1}{2}$ oracles.
+% The COT client chooses the strings corresponding to the views seen by the virtual clients corresponding to its input $x$. Additionally, it asks for the entire view of the each of the virtual servers with some small constant probability $\delta'$. We observe that these so called \emph{watchlists} (the client watches only a small fraction of the virtual server), along with the requests for client's views can be perfectly reduced in one round to $\bOT{1}{2}$ oracles.
 
 
-This MPC protocol $\Pi$ is secure against malicious corruption of $\delta n$ of the $n$ parties. With high probability, the client will see $p/2n < \delta' n<\delta n$ of the views, catching cheating with high probability, but not learning anything besides $f(x,y)$.  
-For a choice of $\delta'$ as above, the IKOPS protocol already happens to be statistically private against malicious clients.
+% This MPC protocol $\Pi$ is secure against malicious corruption of $\delta n$ of the $n$ parties. With high probability, the client will see $p/2n < \delta' n<\delta n$ of the views, catching cheating with high probability, but not learning anything besides $f(x,y)$.  
+% For a choice of $\delta'$ as above, the IKOPS protocol already happens to be statistically private against malicious clients.
 
-There is however (small) non-zero probability of the client learning too much (in the worst case, $f(x,y)$ for all $x\in X$), by ending up watching too many of the virtual parties' view (potentially all of them). 
+% There is however (small) non-zero probability of the client learning too much (in the worst case, $f(x,y)$ for all $x\in X$), by ending up watching too many of the virtual parties' view (potentially all of them). 
 
-Thus, $\Pi_{IKOPS}$ is not perfectly server-private.
-In the following section, we slightly tweak $\Pi_{IKOPS}$, making watchlists deterministic, thereby making it perfectly server-private. In Section~\cite{sec-serv-perf}, using geometric techniques, we demonstrate how to make the protocol from Section~\ref{sec-client-pr} perfectly client correct. Here we critically rely on the fact that $\Pi_{IKOPS}$ satisfies statistical enhanced client privacy, rather than just standard statistical client privacy. 
+% Thus, $\Pi_{IKOPS}$ is not perfectly server-private.
+% In the following section, we slightly tweak $\Pi_{IKOPS}$, making watchlists deterministic, thereby making it perfectly server-private. In Section~\cite{sec-serv-perf}, using geometric techniques, we demonstrate how to make the protocol from Section~\ref{sec-client-pr} perfectly client correct. Here we critically rely on the fact that $\Pi_{IKOPS}$ satisfies statistical enhanced client privacy, rather than just standard statistical client privacy. 
 
-\subsection{Making $\Pi_{\text{IKOPS}}$ perfectly server-private}\label{sec-client-pr}
+Observe that $\Pi_{\IKOPS}$ has a (small) non-zero probability of the client learning too much (in the worst case, $f(x,y)$ for all $y\in\Y$), by ending up watching too many of the virtual parties' view (potentially all of them). Thus, $\Pi_{\IKOPS}$ is not perfectly client secure.
 
-\subsubsection{Setting up deterministic watchlists}
+In the following section, we slightly tweak $\Pi_{\IKOPS}$, making the watchlists deterministic, thereby making it perfectly client secure. In Section~\cite{sec-serv-perf}, using geometric techniques, we demonstrate how to make the protocol from Section~\ref{sec-client-pr} perfectly server secure. Here we critically rely on the fact that $\Pi_{\IKOPS}$ satisfies strong server security, rather than just standard statistical server security. 
+
+\subsection{Making $\Pi_{\IKOPS}$ Perfectly Client Secure}\label{sec-client-pr}
+
+\subsubsection{Setting Up Deterministic Watchlists}
 Recall the problem with client privacy was in the fact that the client may watch the internal state of too make servers, breaching security of the protocol $\Pi$, and thus of the entire construction.
-To solve this problem, we replace the probabilistic watchlist setup with a deterministic watchlist setup that allows the honest client to learn exactly $p_1n$ of the views of its choice, while no client can learn more than $p_2n$ of the values, where $p_2$ is not ``much larger'' than $p_1$. We also allow the server to input $\bot$, in which case the client should output $\bot$. Formally let $k_1,k_2,n,h$ where $n\geq k_2 > 2k_1$, and $h\geq 1$. We define $f_1:\sOT{k_1}{n}{h}$ and $f_2:\sOT{k_2}{n}{h}$. We extend the $f_i$ above into $f'_1:X'_1\times Y'_1\rightarrow Z'_1,f'_2:X'_2\times Y_2\rightarrow Z'_2$, so that $Z_i=Z_i\cup{\{\bot\}}$, $Y_i=Y_i\cup{\{\bot\}}$  so that $\forall x\in X_i,f_i(x,\bot)=\bot$.
+To solve this problem, we replace the probabilistic watchlist setup with a deterministic watchlist setup that allows the honest client to learn exactly $p_1n$ of the views of its choice, while no malicious client can learn more than $p_2n$ of the values, where $p_2$ is not much larger than $p_1$. We also allow the server to input $\bot$, in which case the client should output $\bot$. Formally, let $k_1,k_2,n,h$ where $n\geq k_2 > 2k_1$, and $h\geq 1$. We let $f_1:\X_1\times\Y_1\mapsto\Z_1$ and $f_2:\X_2\times\Y_2\mapsto\Z_2$ be the $\sOT{k_1}{n}{h}$ and $\sOT{k_2}{n}{h}$ functionalities respectively. We extend each $f_i$ above into $f'_1:\X'_1\times\Y_1\mapsto\Z'_1,f'_2:\X'_2\times\Y_2\mapsto\Z'_2$, so that $\Z'_i=\Z_i\cup\set{\bot}$, $\X'_i=\X_i\cup\set{\bot}$ and $f'_i(\bot,y)=\bot$ for every $y\in\Y$.
 
 \begin{theorem}[a $\sOT{(k_1,k_2)}{n}{h}$ protocol]
 	There exists a protocol $\Pi$ as in Definition~\ref{def-prot} for $f'_1$ with communication complexity $l$. $\Pi$ satisfies:
 	\begin{itemize}
-	\item Perfect honest correctness.	
+	\item Perfect honest correctness.
 	\item Perfect client-correctness with input-dependent abort.
 	\item Perfect server privacy relaxed to replace $f'_1$ with $f'_2$ (that is, malicious clients can be simulated by inputting additional, larger, sets beyond what is allowed by $f_1$).
 	 \end{itemize} 
@@ -507,7 +839,7 @@ To solve this problem, we replace the probabilistic watchlist setup with a deter
 \paragraph{Proof.} We construct a protocol as required, we refer to as $\Pi_{\text{ramp-OT}}$.
 
 \begin{construction}
-	The parties perform $n$ $\sOT{1}{2}{nh}$'s in parallel (implemented via the ${\OT{1}{2}}^l$ using parallel instances of $\INT$).  
+	The parties perform $n$ $\sOT{1}{2}{nh}$'s in parallel (implemented via the ${\bOT{1}{2}}^l$ using parallel instances of $\INT$).  
 		\begin{enumerate} 
 			\item $\mathbf{\Pi_D(y):}$ In the $i$'th instance the sender samples $n$ random strings $r_1,\ldots,r_n\in\{0,1\}^h$. Then, it secret-shares $r=(r_1,\ldots,r_n)$ with a $(n-2k_1)$-out-of-$n$ threshold using Shamir's secret sharing~\cite{Shamir79}. Let $s_1,\ldots,s_n\in \{0,1\}^{hn}$ denote the resulting shares. Output $s = (y_1\oplus r_1,s_1,y_2,s_2,\ldots,y_n\oplus r_n,s_n)$ (the $y_i$'s are padded accordingly).
 			\item $\mathbf{\Pi_Q(x=\{x_1,\ldots,x_{k_1}\}):}$ Assume wlog. that all the $x_i$'s are distinct. Output $c=(c_1,\ldots,c_n)$, where $c_i=0$ iff. $i\in x = \{x_1,\ldots,x_{k_1}\}$.
@@ -574,7 +906,7 @@ Here we represent  $X,Y,Z$ as some $X=\{0,1\}^{l_x},Y=\{0,1\}^{l_y},Z=\{0,1\}^{l
 	\item The server runs $\Pi'$ on $(y,r_s)$ in his head, generating the views $V_1,\ldots,V_n$ of the virtual servers, and the purported messages $V_{1,0},V_{1,1},\ldots,V_{2\alpha,1}$ received by each of the $2\alpha$ clients from all $n$ virtual parties.
 	
 	Recall that in~\cite{IKOPS11}, on input $x'=Enc(x)$, the parties run
-	parallel instances of $\OT{1}{2}{h}$ (for the proper value of $h$), where in the first $\alpha$ instances, instance $i$ inputs $V_{i,0},V_{i,1}$ are used by the server. 
+	parallel instances of $\bOT{1}{2}{h}$ (for the proper value of $h$), where in the first $\alpha$ instances, instance $i$ inputs $V_{i,0},V_{i,1}$ are used by the server. 
 	The other set of parallel OT's is dedicated to watchlists.
 	The client picks $\delta/3 n$  of the views $V_1,\ldots,V_n$.
 	This is done using the $\sOT{(\delta/3n ,\delta n)}{n}{h}$ protocol in $\Pi_{\text{ramp-OT}}$. 
@@ -666,7 +998,7 @@ As a corollary from Lemma~\ref{lem-tt-perfect} and Theorem~\ref{thm-pcl}, we obt
 \begin{theorem}\label{thm-main}
 Let $f:X\times Y\rightarrow Z$ denote a full-dimensional function, and
 $g=|X|(|Z|-1)$.
-Then there exists a protocol $\Pi'$ as in Definition~\ref{def-prot} evaluating $f$ with perfect security against a malicious adversary in the ${\OT{1}{2}}^l$-hybrid model
+Then there exists a protocol $\Pi'$ as in Definition~\ref{def-prot} evaluating $f$ with perfect security against a malicious adversary in the ${\bOT{1}{2}}^l$-hybrid model
 for $l=\ell(1/10(g-1)g!, |X|, |Z|)=\tilde{O}(h^2,poly(|X|,|Z|))$, where $\ell$ is the function in Theorem~\ref{thm-pcl}.
  
 %$\log(|Z|)\tilde{O}(\log(|X|) (\log({\epsilon^{-1}})+h)^2)+polylog(\epsilon^{-1})=$
@@ -759,7 +1091,7 @@ Some useful functionalities that may computed with perfect security are some of 
 One example of OT with small parameters for which we can verify the required condition is $\sOT{5}{2}{1}$. This leaves the cases of $\sOT{4}{2}{1}$ and $\sOT{3}{2}{1}$ open.
 
 
-\bibliographystyle{unsrt}
-\bibliography{sample}
+\bibliographystyle{abbrvnat}
+\bibliography{crypto}
 
 \end{document}
